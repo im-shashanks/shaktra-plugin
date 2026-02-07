@@ -9,7 +9,7 @@ This project uses the **Shaktra** development framework — an opinionated workf
 | `/shaktra:tpm` | Technical Project Manager — planning, stories, sprint management |
 | `/shaktra:dev` | Developer — implementation with TDD workflow |
 | `/shaktra:review` | Code Reviewer — PR reviews and app-level quality checks |
-| `/shaktra:analyze` | Analyzer — cost-benefit and change-request analysis |
+| `/shaktra:analyze` | Analyzer — brownfield codebase analysis for development readiness |
 | `/shaktra:general` | General assistant — questions, explanations, guidance |
 | `/shaktra:init` | Initialize Shaktra in a project |
 | `/shaktra:doctor` | Diagnose framework health and configuration issues |
@@ -23,13 +23,12 @@ Use `/shaktra:workflow` for automatic intent routing, or invoke agents directly 
 
 Framework state is stored in the `.shaktra/` directory:
 - `settings.yml` — project configuration and thresholds
-- `decisions.yml` — architectural decisions (append-only)
-- `lessons.yml` — lessons learned (append-only)
 - `sprints.yml` — sprint state and velocity tracking
-- `memory/` — agent memory files
+- `memory/decisions.yml` — architectural decisions (append-only)
+- `memory/lessons.yml` — lessons learned (append-only)
 - `stories/` — user story files
 - `designs/` — design documents
-- `analysis/` — analysis outputs
+- `analysis/` — codebase analysis outputs (brownfield)
 
 ## Quality Standards
 

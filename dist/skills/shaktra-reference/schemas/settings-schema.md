@@ -20,6 +20,14 @@ tdd:
 quality:
   p1_threshold: integer  # default: 2 — max P1 findings before merge block
 
+review:
+  verification_test_persistence: string  # default: "ask" — "auto" | "always" | "never" | "ask"
+  min_verification_tests: integer        # default: 5 — minimum independent verification tests
+
+analysis:
+  summary_token_budget: integer  # default: 600 — max tokens per artifact summary section
+  incremental_refresh: boolean   # default: true — enable checksum-based incremental refresh
+
 sprints:
   enabled: boolean              # default: true
   velocity_tracking: boolean    # default: true
@@ -34,6 +42,10 @@ sprints:
 | `tdd.coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
 | `tdd.hotfix_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
 | `quality.p1_threshold` | sw-quality, code-reviewer, severity-taxonomy merge gate |
+| `review.verification_test_persistence` | code-reviewer |
+| `review.min_verification_tests` | code-reviewer |
+| `analysis.summary_token_budget` | cba-analyzer, analyze skill (validation) |
+| `analysis.incremental_refresh` | analyze skill (refresh workflow) |
 | `sprints.enabled` | scrummaster, tpm-quality |
 | `sprints.velocity_tracking` | scrummaster |
 | `sprints.sprint_duration_weeks` | scrummaster |

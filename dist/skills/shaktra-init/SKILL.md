@@ -64,8 +64,8 @@ Read template files from `${CLAUDE_PLUGIN_ROOT}/templates/` and write them into 
 | Template Source | Destination | Post-Processing |
 |---|---|---|
 | `templates/settings.yml` | `.shaktra/settings.yml` | Replace empty `project:` fields with user's answers from Step 2 |
-| `templates/decisions.yml` | `.shaktra/decisions.yml` | Copy as-is |
-| `templates/lessons.yml` | `.shaktra/lessons.yml` | Copy as-is |
+| `templates/decisions.yml` | `.shaktra/memory/decisions.yml` | Copy as-is |
+| `templates/lessons.yml` | `.shaktra/memory/lessons.yml` | Copy as-is |
 | `templates/sprints.yml` | `.shaktra/sprints.yml` | Copy as-is |
 | `templates/analysis-manifest.yml` | `.shaktra/analysis/manifest.yml` | Copy as-is |
 
@@ -117,9 +117,9 @@ Package Manager: <package_manager>
 
 Created:
   .shaktra/settings.yml
-  .shaktra/decisions.yml
-  .shaktra/lessons.yml
   .shaktra/sprints.yml
+  .shaktra/memory/decisions.yml
+  .shaktra/memory/lessons.yml
   .shaktra/analysis/manifest.yml
   .shaktra/memory/
   .shaktra/stories/
