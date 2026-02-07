@@ -4,6 +4,9 @@
 # Claude Code local state
 .claude/
 
+# Local non-committed files
+.local/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
