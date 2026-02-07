@@ -17,6 +17,10 @@ review:
   verification_test_persistence: ask   # auto | always | never | ask
   min_verification_tests: 5
 
+analysis:
+  summary_token_budget: 600   # max tokens per artifact summary section
+  incremental_refresh: true   # enable checksum-based incremental refresh
+
 sprints:
   enabled: true
   velocity_tracking: true

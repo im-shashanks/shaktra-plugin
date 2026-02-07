@@ -67,6 +67,7 @@ Read template files from `${CLAUDE_PLUGIN_ROOT}/templates/` and write them into 
 | `templates/decisions.yml` | `.shaktra/decisions.yml` | Copy as-is |
 | `templates/lessons.yml` | `.shaktra/lessons.yml` | Copy as-is |
 | `templates/sprints.yml` | `.shaktra/sprints.yml` | Copy as-is |
+| `templates/analysis-manifest.yml` | `.shaktra/analysis/manifest.yml` | Copy as-is |
 
 For `settings.yml`, populate the `project:` section with the gathered values:
 
@@ -80,7 +81,7 @@ project:
   package_manager: "<user's package manager>"
 ```
 
-All other sections (`tdd`, `quality`, `sprints`) retain their template defaults.
+All other sections (`tdd`, `quality`, `analysis`, `sprints`) retain their template defaults.
 
 ### Step 5: Handle Project CLAUDE.md
 
@@ -119,6 +120,7 @@ Created:
   .shaktra/decisions.yml
   .shaktra/lessons.yml
   .shaktra/sprints.yml
+  .shaktra/analysis/manifest.yml
   .shaktra/memory/
   .shaktra/stories/
   .shaktra/designs/
@@ -128,5 +130,6 @@ Created:
 
 Next steps:
   1. Review .shaktra/settings.yml and adjust thresholds if needed
-  2. Run /shaktra:tpm to start planning your first sprint
+  2. For brownfield projects: run /shaktra:analyze to understand the existing codebase
+  3. Run /shaktra:tpm to start planning your first sprint
 ```
