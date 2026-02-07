@@ -1,0 +1,19 @@
+project:
+  name: ""
+  type: ""              # greenfield | brownfield
+  language: ""          # python | typescript | go | java | rust | etc.
+  test_framework: ""
+  coverage_tool: ""
+  package_manager: ""
+
+tdd:
+  coverage_threshold: 90
+  hotfix_coverage_threshold: 70
+
+quality:
+  p1_threshold: 2
+
+sprints:
+  enabled: true
+  velocity_tracking: true
+  sprint_duration_weeks: 2

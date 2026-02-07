@@ -31,15 +31,19 @@ For phase index and dependency graph: `docs/shaktra-plan/execution-plan.md`
 This is a **Claude Code plugin** (NOT a regular project). The directory layout follows the plugin spec:
 
 ```
-.claude-plugin/plugin.json    # Plugin manifest (required)
-agents/                        # Sub-agent definitions (at root, NOT inside .claude/)
-skills/                        # Skill definitions (at root, NOT inside .claude/)
-hooks/hooks.json               # Hook configurations
-scripts/                       # Hook implementation scripts (Python)
-templates/                     # State file templates for /shaktra:init
+.claude-plugin/plugin.json       # Plugin manifest (required)
+.claude-plugin/marketplace.json  # Marketplace catalog (source: "./dist")
+agents/                          # Sub-agent definitions (at root, NOT inside .claude/)
+skills/                          # Skill definitions (at root, NOT inside .claude/)
+hooks/hooks.json                 # Hook configurations
+scripts/                         # Hook implementation scripts (Python)
+templates/                       # State file templates for /shaktra:init
+dist/                            # Packaged plugin for distribution (committed to git)
 ```
 
 Skills are namespaced as `/shaktra:skill-name` when installed by users.
+
+**SKILL.md files require YAML frontmatter** with at least `name` and `description` fields for Claude Code to discover them.
 
 ## Key Design Decisions
 
@@ -50,6 +54,7 @@ These were explicitly chosen and must not be overridden:
 - **SW Quality and Code Reviewer are separate** — SW Quality checks story-level during TDD, Code Reviewer checks app-level after completion and reviews PRs
 - **Quality depth must match or exceed Forge** — we reduce bloat, not capability
 - **Plugin distribution** via `/plugin install shaktra` (marketplace.json at `.claude-plugin/marketplace.json`)
+- **dist/ packaging** — Claude Code copies the entire plugin source on install (no include/exclude mechanism). To avoid shipping dev files (docs/, Resources/, .venv/, dev CLAUDE.md), marketplace.json uses `"source": "./dist"`. Run `scripts/package.sh` to rebuild dist/ before committing. The dist/ directory IS committed to git.
 
 ## Design Constraints
 
