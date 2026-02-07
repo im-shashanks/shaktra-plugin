@@ -16,12 +16,11 @@ __pycache__/
 *.so
 
 # Distribution / packaging
-# NOTE: dist/ is NOT ignored — it's the packaged plugin for distribution
-# Run scripts/package.sh to rebuild before committing
+# NOTE: dist/ is NOT ignored — it IS the plugin source
 .Python
 build/
 develop-eggs/
-# dist/  — kept in git for plugin distribution
+# dist/  — this IS the plugin, must be in git
 downloads/
 eggs/
 .eggs/

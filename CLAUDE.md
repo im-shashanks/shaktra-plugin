@@ -31,19 +31,26 @@ For phase index and dependency graph: `docs/shaktra-plan/execution-plan.md`
 This is a **Claude Code plugin** (NOT a regular project). The directory layout follows the plugin spec:
 
 ```
-.claude-plugin/plugin.json       # Plugin manifest (required)
-.claude-plugin/marketplace.json  # Marketplace catalog (source: "./dist")
-agents/                          # Sub-agent definitions (at root, NOT inside .claude/)
-skills/                          # Skill definitions (at root, NOT inside .claude/)
-hooks/hooks.json                 # Hook configurations
-scripts/                         # Hook implementation scripts (Python)
-templates/                       # State file templates for /shaktra:init
-dist/                            # Packaged plugin for distribution (committed to git)
+.claude-plugin/marketplace.json  # Marketplace catalog (source: "./dist") — stays at repo root
+dist/                            # THE PLUGIN — all plugin code lives here
+  .claude-plugin/plugin.json     # Plugin manifest (required)
+  agents/                        # Sub-agent definitions
+  skills/                        # Skill definitions
+  hooks/hooks.json               # Hook configurations
+  scripts/                       # Hook implementation scripts (Python)
+  templates/                     # State file templates for /shaktra:init
+docs/                            # Dev-only — architecture, phase plans, Forge analysis
+Resources/                       # Dev-only — diagrams, reference docs
+CLAUDE.md                        # Dev-only — this file (not installed)
 ```
+
+**All plugin development happens in `dist/`.** Dev files (docs, Resources, CLAUDE.md) stay at repo root and are never installed.
 
 Skills are namespaced as `/shaktra:skill-name` when installed by users.
 
 **SKILL.md files require YAML frontmatter** with at least `name` and `description` fields for Claude Code to discover them.
+
+For local dev testing: `claude --plugin-dir dist/`
 
 ## Key Design Decisions
 
@@ -54,7 +61,8 @@ These were explicitly chosen and must not be overridden:
 - **SW Quality and Code Reviewer are separate** — SW Quality checks story-level during TDD, Code Reviewer checks app-level after completion and reviews PRs
 - **Quality depth must match or exceed Forge** — we reduce bloat, not capability
 - **Plugin distribution** via `/plugin install shaktra` (marketplace.json at `.claude-plugin/marketplace.json`)
-- **dist/ packaging** — Claude Code copies the entire plugin source on install (no include/exclude mechanism). To avoid shipping dev files (docs/, Resources/, .venv/, dev CLAUDE.md), marketplace.json uses `"source": "./dist"`. Run `scripts/package.sh` to rebuild dist/ before committing. The dist/ directory IS committed to git.
+- **dist/ is the plugin** — Claude Code has no include/exclude mechanism for plugin installs, so all plugin code lives directly in `dist/`. Marketplace.json uses `"source": "./dist"` to scope what gets installed. Dev files (docs/, Resources/, CLAUDE.md) stay at repo root and are never shipped.
+- **Future: separate distribution repo** — `marketplace add` clones the full repo (including dev files) into the user's marketplaces directory. Post-completion, split into a public distribution repo containing only `dist/` contents.
 
 ## Design Constraints
 
@@ -63,7 +71,7 @@ Check every file against these before considering any phase complete:
 - No single file over 300 lines
 - No content duplication across layers (skill defines, agent references — never both)
 - No dead code, disabled stubs, or orphaned files
-- Severity taxonomy (P0-P3) defined in exactly ONE file: `skills/shaktra-reference/severity-taxonomy.md`
+- Severity taxonomy (P0-P3) defined in exactly ONE file: `dist/skills/shaktra-reference/severity-taxonomy.md`
 - All threshold values read from `.shaktra/settings.yml` — never hardcoded
 - All hook scripts in Python (cross-platform, no `grep -oP`)
 - Hooks block or don't exist — no warn-only
