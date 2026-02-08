@@ -101,6 +101,19 @@ Write to `handoff.yml`:
 - `code_summary.all_tests_green`: true (only after all tests pass)
 - `code_summary.coverage`: integer percentage from coverage report
 - `code_summary.files_modified`: list of all created/modified file paths
+- `code_summary.deviations`: list of plan deviations (if any) — each with `change`, `justification`
+- `important_decisions`: list of architectural decisions discovered during implementation (see below)
+
+### Pattern Decision Capture
+
+During implementation, if any of these occur, add an entry to `handoff.important_decisions`:
+- A **new design pattern** was introduced (repository, factory, adapter, etc.)
+- A **new architectural convention** was established (DI approach, async pattern, error handling strategy)
+- A **deviation from existing patterns** was made with justification
+- A **canonical example** worth replicating was created (reference the file path in guidance)
+
+Each entry: `category` (use "consistency"), `title`, `summary`, `guidance` (1-5 actionable rules).
+The comprehensive review will promote qualifying decisions to `decisions.yml`.
 
 ## Output
 

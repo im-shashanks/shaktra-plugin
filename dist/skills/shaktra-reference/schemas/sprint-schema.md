@@ -48,6 +48,21 @@ else:
 
 Scrummaster sorts backlog by: blocked_by (unblocked first) → priority → points (smallest first).
 
-## Template Alignment Note
+## Template Migration Contract
 
-The init template (`templates/sprints.yml`) uses `velocity_history` and `sprints` as top-level keys for simplicity. This schema defines the target structure that the scrummaster agent migrates to on first sprint creation. Both formats are valid; the scrummaster handles the transition.
+The init template (`templates/sprints.yml`) uses a simplified structure:
+
+```yaml
+current_sprint: null
+velocity_history: []
+sprints: []
+```
+
+On first sprint creation, the scrummaster agent migrates to the target schema:
+
+1. `velocity_history: []` → `velocity.history: []` + `velocity.average: 0` + `velocity.trend: "stable"`
+2. `sprints: []` → removed (sprint history lives in `velocity.history`)
+3. `current_sprint: null` → populated with first sprint data
+4. `backlog: []` → added (empty initially, populated during sprint allocation)
+
+After migration, the file follows this schema exclusively. The scrummaster performs this migration automatically on first sprint creation; no manual intervention required.

@@ -70,7 +70,14 @@ Any deviation from the plan must be documented in `handoff.code_summary` with ju
 
 ### 5. Quick-Check Cross-Reference
 
-Verify that all P0 and P1 findings from earlier quick-check gates (Plan, Test, Code) were actually resolved. Check the handoff for prior findings and confirm each was addressed.
+Read `handoff.quality_findings` — this contains findings from earlier quick-check gates (Plan, Test, Code), persisted by the orchestrator after each gate.
+
+For each prior P0 or P1 finding where `resolved: false`:
+- Verify the issue is resolved in the current code
+- If still present: escalate to P0 (recurring finding after fix attempt)
+- If resolved: confirm as addressed
+
+If `quality_findings` is empty, skip this step (first-time review with no prior gates).
 
 ### 6. Decision Consolidation
 

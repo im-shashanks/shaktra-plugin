@@ -10,6 +10,8 @@ project:
 tdd:
   coverage_threshold: 90
   hotfix_coverage_threshold: 70
+  small_coverage_threshold: 80
+  large_coverage_threshold: 95
 
 quality:
   p1_threshold: 2

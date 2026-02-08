@@ -52,6 +52,9 @@ code_summary:
   all_tests_green: boolean  # must be true before advancing
   coverage: integer         # percentage — checked against tier threshold
   files_modified: [string]
+  deviations:               # plan deviations — empty list if none
+    - change: string        # what diverged from the plan
+      justification: string # why the deviation was necessary
 ```
 
 ## Important Decisions
@@ -74,13 +77,17 @@ These decisions persist in `decisions.yml` and are loaded by the architect, sw-e
 
 ## Quality Findings
 
+**Population:** The orchestrator persists findings to this field after each quality gate (QUICK_CHECK and COMPREHENSIVE). SW Quality returns findings as output; the orchestrator writes the latest findings here. The `check_p0_findings` hook reads this field at workflow completion.
+
 ```yaml
 quality_findings:
   - severity: string      # P0 | P1 | P2 | P3
     dimension: string     # quality dimension (A-M)
+    gate: string          # "plan" | "test" | "code" | "quality" — which gate produced this
     description: string
     file: string
     line: integer
+    resolved: boolean     # true if fixed in a subsequent fix loop
 ```
 
 ## Memory Guard

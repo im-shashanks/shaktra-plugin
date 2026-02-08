@@ -58,7 +58,7 @@ Process:
 2. Apply the gate-specific subset:
    - **Plan gate:** PL-01 through PL-05
    - **Test gate:** TQ-01 through TQ-13
-   - **Code gate:** CQ-01 through CQ-17
+   - **Code gate:** CQ-01 through CQ-18
 3. For each check, examine the artifacts and record findings
 4. If `prior_findings` provided: verify each prior finding was addressed
 5. Read `settings.quality.p1_threshold` for gate logic

@@ -32,6 +32,10 @@ quality_loop(artifact_paths, review_mode, gate, creator_agent, max_attempts=3):
     - number of fix attempts made
     - recommendation: manual review needed
   RETURN BLOCKED
+
+After loop returns (PASS or BLOCKED):
+  Append result.findings to handoff.quality_findings (set gate field to current gate name).
+  Mark prior findings from this gate as resolved: true if they no longer appear.
 ```
 
 ---
@@ -59,6 +63,24 @@ Auto-detect tier based on story complexity and scope (using `story-tiers.md` log
 **If sparse:** "Story {id} is sparse ({have} of {need} required fields for {tier} tier). Missing: {field_list}. Run: `/shaktra:tpm enrich {id}`." Stop.
 
 **If Trivial tier:** Note that `hotfix_coverage_threshold` from settings applies.
+
+---
+
+## Handoff Initialization
+
+Before entering the pipeline, create `handoff.yml` at `.shaktra/stories/<story_id>/handoff.yml` with identity fields:
+
+```yaml
+story_id: <story_id>
+tier: <detected_tier>
+current_phase: pending
+completed_phases: []
+quality_findings: []
+important_decisions: []
+memory_captured: false
+```
+
+If `handoff.yml` already exists (resume scenario), skip this step — the existing state is preserved.
 
 ---
 

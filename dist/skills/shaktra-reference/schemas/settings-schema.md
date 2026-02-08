@@ -17,6 +17,8 @@ project:
 tdd:
   coverage_threshold: integer       # default: 90 — Medium tier target
   hotfix_coverage_threshold: integer # default: 70 — Trivial tier target
+  small_coverage_threshold: integer  # default: 80 — Small tier target
+  large_coverage_threshold: integer  # default: 95 — Large tier target
 
 quality:
   p1_threshold: integer  # default: 2 — max P1 findings before merge block
@@ -44,6 +46,8 @@ sprints:
 | `project.architecture` | architect (validates alignment), sw-engineer (pattern selection), developer (code structure) |
 | `tdd.coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
 | `tdd.hotfix_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
+| `tdd.small_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
+| `tdd.large_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
 | `quality.p1_threshold` | sw-quality, code-reviewer, severity-taxonomy merge gate |
 | `review.verification_test_persistence` | code-reviewer |
 | `review.min_verification_tests` | code-reviewer |
@@ -53,3 +57,15 @@ sprints:
 | `sprints.velocity_tracking` | scrummaster |
 | `sprints.sprint_duration_weeks` | scrummaster |
 | `sprints.default_velocity` | scrummaster (fallback when no velocity history) |
+
+## Environment Variable Overrides
+
+Hook scripts support these environment variables for override scenarios (CI, testing, emergency fixes):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `SHAKTRA_ALLOW_MAIN_BRANCH` | unset | Set to any value to bypass protected branch hook |
+| `SHAKTRA_SKIP_P0_CHECK` | unset | Set to any value to bypass P0 finding check at completion |
+| `CLAUDE_PROJECT_DIR` | `cwd` | Override project root for hook file resolution |
+
+These are escape hatches — not regular workflow configuration. Do not set them permanently.

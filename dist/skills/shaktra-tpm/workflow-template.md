@@ -140,7 +140,8 @@ Fast path for trivial fixes. Produces a Trivial-tier story with minimal overhead
    - If `QUALITY_PASS`: present to user for confirmation
    - If `QUALITY_BLOCKED`: present findings to user (hotfixes shouldn't fail quality, but if they do, user decides)
 4. On user confirmation: write story to `.shaktra/stories/`
-5. Recommend next step: `/shaktra:dev` to implement the hotfix
+5. Spawn **memory-curator** with workflow_type: "tpm-hotfix", artifacts_path: story directory
+6. Recommend next step: `/shaktra:dev` to implement the hotfix
 
 ---
 
