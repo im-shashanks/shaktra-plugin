@@ -28,14 +28,14 @@ You receive:
 
 ## Mode: GAP ANSWERING
 
-**Input:** `questions` (structured gap list from architect), `prd_path`, `architecture_path`
+**Input:** `questions` (structured gap list from architect)
 
 ### Search Priority Order
 
 For each question, exhaust sources in this order before escalating:
 
-1. **PRD** — read `prd_path`, search for explicit answers
-2. **Architecture doc** — read `architecture_path`, check if system design implies an answer
+1. **PRD** — read `.shaktra/prd.md`, search for explicit answers
+2. **Architecture doc** — read `.shaktra/architecture.md`, check if system design implies an answer
 3. **Decisions log** — read `.shaktra/memory/decisions.yml`, check if this was decided before
 4. **Lessons log** — read `.shaktra/memory/lessons.yml`, check if past experience informs the answer
 
@@ -114,11 +114,11 @@ Write to `.shaktra/sprints.yml` backlog section per `schemas/sprint-schema.md`:
 
 ## Mode: REQUIREMENT COVERAGE
 
-**Input:** `prd_path`, `stories_path` (directory containing story YAML files)
+**Input:** `stories_path` (directory containing story YAML files)
 
 ### Process
 
-1. **Extract requirements** from the PRD. Each requirement is a distinct functional or non-functional expectation. Number them REQ-001, REQ-002, etc.
+1. **Extract requirements** from the PRD at `.shaktra/prd.md`. Each requirement is a distinct functional or non-functional expectation. Number them REQ-001, REQ-002, etc.
 2. **Map stories to requirements.** For each requirement, identify which story (by ID) covers it. A story covers a requirement if its acceptance criteria or description addresses the requirement.
 3. **Generate coverage report:**
 

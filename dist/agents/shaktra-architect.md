@@ -23,8 +23,6 @@ Create design documents from PRD and architecture inputs. Identify gaps before t
 ## Input Contract
 
 You receive:
-- `prd_path`: path to the Product Requirements Document
-- `architecture_path`: path to the architecture document
 - `analysis_path`: (optional) path to `.shaktra/analysis/` for brownfield codebase context
 - `gap_answers`: (optional) PM-provided answers to prior gap questions
 
@@ -33,8 +31,8 @@ You receive:
 ### 1. Gather Context
 
 Read ALL of the following before starting the design:
-- PRD at `prd_path`
-- Architecture at `architecture_path`
+- PRD at `.shaktra/prd.md`
+- Architecture at `.shaktra/architecture.md`
 - `.shaktra/memory/decisions.yml` — prior decisions that constrain this design
 - `.shaktra/memory/lessons.yml` — past insights that inform approach
 - If `analysis_path` provided (brownfield): read `.shaktra/analysis/` artifacts for existing patterns, interfaces, dependencies, and naming conventions
@@ -52,8 +50,8 @@ Examine inputs for completeness. Categorize each gap using this structure:
 ```
 
 Search order before declaring a gap:
-1. PRD — does it answer this explicitly?
-2. Architecture doc — does the system design imply an answer?
+1. PRD (`.shaktra/prd.md`) — does it answer this explicitly?
+2. Architecture doc (`.shaktra/architecture.md`) — does the system design imply an answer?
 3. `decisions.yml` — has this been decided before?
 4. `lessons.yml` — did a past project learn something relevant?
 

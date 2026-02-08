@@ -40,7 +40,7 @@ Complete TPM workflow — design through sprint planning. This is the default fo
 ### Phase 1 — Design
 
 1. Read `.shaktra/settings.yml` for project context
-2. Spawn **architect** with PRD path, architecture path, analysis path (if brownfield)
+2. Spawn **architect** with analysis path (if brownfield) — architect reads PRD and architecture from fixed paths `.shaktra/prd.md` and `.shaktra/architecture.md`
 3. Handle architect response:
    - **If `GAPS_FOUND`:** Spawn **product-manager** (mode: gaps) with the gap questions
      - For each PM answer: if `PM_ESCALATE`, ask user via AskUserQuestion
@@ -60,7 +60,7 @@ Complete TPM workflow — design through sprint planning. This is the default fo
 
 ### Phase 3 — PM Analysis
 
-1. Spawn **product-manager** (mode: coverage) with PRD path and stories directory
+1. Spawn **product-manager** (mode: coverage) with stories directory — PM reads PRD from `.shaktra/prd.md`
    - If coverage < 100%: present gap report to user
    - User decides: create additional stories or accept gaps
    - If additional stories needed: return to Phase 2 for the new stories

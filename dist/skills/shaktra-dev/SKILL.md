@@ -74,7 +74,7 @@ Decisions: {decisions_path}
 Lessons: {lessons_path}
 
 Follow your process: read story, design components, map tests, define order, identify patterns and risks.
-Write implementation_plan.md to {story_tmp_dir}/implementation_plan.md.
+Write implementation_plan.md to {story_dir}/implementation_plan.md.
 Update handoff at {handoff_path} with plan_summary.
 ```
 

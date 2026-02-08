@@ -69,8 +69,8 @@ Use these Task() prompts when spawning sub-agents. Fill placeholders with actual
 You are the shaktra-architect agent. Create a design document for this project.
 
 Inputs:
-- PRD: {prd_path}
-- Architecture: {architecture_path}
+- PRD: .shaktra/prd.md
+- Architecture: .shaktra/architecture.md
 - Analysis: {analysis_path or "N/A — greenfield project"}
 - Gap answers: {gap_answers or "None — first pass"}
 - Settings: {settings summary — project type, language}
@@ -100,8 +100,8 @@ Questions from architect:
 {structured_gap_list}
 
 Source documents:
-- PRD: {prd_path}
-- Architecture: {architecture_path}
+- PRD: .shaktra/prd.md
+- Architecture: .shaktra/architecture.md
 
 Search priority: PRD → Architecture → decisions.yml → lessons.yml → escalate.
 Log every answer to .shaktra/memory/decisions.yml.
@@ -123,7 +123,7 @@ Write backlog to .shaktra/sprints.yml.
 ```
 You are the shaktra-product-manager agent operating in requirement coverage mode.
 
-PRD: {prd_path}
+PRD: .shaktra/prd.md
 Stories directory: {stories_path}
 
 Map every PRD requirement to covering stories. Report coverage % and gaps.
@@ -194,8 +194,8 @@ Extract lessons that meet the capture bar. Append to .shaktra/memory/lessons.yml
 
 | Workflow | Requires | If Missing |
 |---|---|---|
-| Full | PRD, Architecture doc, `.shaktra/settings.yml` | Ask user for paths; settings → run `/shaktra:init` |
-| Design Only | PRD, Architecture doc, `.shaktra/settings.yml` | Same as Full |
+| Full | `.shaktra/prd.md`, `.shaktra/architecture.md`, `.shaktra/settings.yml` | Inform user to place PRD and architecture doc; settings → run `/shaktra:init` |
+| Design Only | `.shaktra/prd.md`, `.shaktra/architecture.md`, `.shaktra/settings.yml` | Same as Full |
 | Stories Only | Design doc in `.shaktra/designs/`, `.shaktra/settings.yml` | Run design workflow first |
 | Enrich | Story files in `.shaktra/stories/`, `.shaktra/settings.yml` | Run stories workflow first |
 | Hotfix | `.shaktra/settings.yml` | Run `/shaktra:init` |

@@ -24,7 +24,7 @@ Write failing tests during the RED phase of the TDD pipeline. Tests must fail be
 
 You receive:
 - `story_path`: path to the story YAML file
-- `plan_path`: path to `implementation_plan.md` in the story's `.tmp` directory
+- `plan_path`: path to `implementation_plan.md` in the story directory
 - `handoff_path`: path to `handoff.yml`
 
 ## Process

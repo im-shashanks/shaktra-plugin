@@ -13,7 +13,7 @@ Full quality assessment for the QUALITY phase of the TDD pipeline. Uses 14 dimen
 Read before reviewing:
 - Story YAML at `.shaktra/stories/<story_id>.yml`
 - Handoff at `.shaktra/stories/<story_id>/handoff.yml`
-- Implementation plan at `.shaktra/stories/<story_id>/.tmp/implementation_plan.md`
+- Implementation plan at `.shaktra/stories/<story_id>/implementation_plan.md`
 - All files in `handoff.code_summary.files_modified`
 - All files in `handoff.test_summary.test_files`
 - `.shaktra/settings.yml` — for threshold values

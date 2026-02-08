@@ -78,7 +78,7 @@ Based on the story scope (integration, security, data, etc.):
 
 ### 8. Write Plan
 
-Write `implementation_plan.md` to the story's `.tmp` directory:
+Write `implementation_plan.md` to the story directory (`.shaktra/stories/<story_id>/`):
 - Component structure with files and responsibilities
 - Test plan with test names, types, mocks, edge cases
 - Implementation order
@@ -97,7 +97,7 @@ Update `handoff.yml` with:
 
 ## Output
 
-- `implementation_plan.md` in the story's `.tmp` directory
+- `implementation_plan.md` in the story directory
 - Updated `handoff.yml` with `plan_summary` populated
 
 ## Critical Rules

@@ -130,6 +130,7 @@ Created:
 
 Next steps:
   1. Review .shaktra/settings.yml and adjust thresholds if needed
-  2. For brownfield projects: run /shaktra:analyze to understand the existing codebase
-  3. Run /shaktra:tpm to start planning your first sprint
+  2. Place your PRD at .shaktra/prd.md and architecture doc at .shaktra/architecture.md
+  3. For brownfield projects: run /shaktra:analyze to understand the existing codebase
+  4. Run /shaktra:tpm to start planning your first sprint
 ```
