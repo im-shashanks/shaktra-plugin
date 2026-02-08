@@ -1,4 +1,4 @@
-# Phase 11 — Workflow Router
+# Phase 11 — Workflow Router [COMPLETE]
 
 > **Context Required:** Read [architecture-overview.md](../architecture-overview.md) before starting.
 > **Depends on:** All main agent skills (Phases 4-8) should be complete.

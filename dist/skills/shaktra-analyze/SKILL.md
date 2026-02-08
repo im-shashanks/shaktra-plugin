@@ -113,6 +113,7 @@ Decisions: .shaktra/memory/decisions.yml
 Output path: .shaktra/analysis/{output_file}
 
 Read your dimension specification from analysis-dimensions-core.md (D1-D4) or analysis-dimensions-health.md (D5-D8).
+Follow the output schema from analysis-output-schemas.md for your artifact format.
 Follow the checks, evidence requirements, and output schema for dimension {dimension_id}. Ground all findings in static.yml data where possible.
 
 Your output file MUST begin with a summary: section (300-600 tokens, self-contained).
