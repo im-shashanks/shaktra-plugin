@@ -38,8 +38,12 @@ Read the story YAML at `story_path`. Understand:
 
 ### 2. Read Project Context
 
-- Read `decisions.yml` for prior decisions that constrain this implementation
+- Read `.shaktra/settings.yml` for `project.architecture` (the project's declared architecture style)
+- Read `decisions.yml` for prior decisions that constrain this implementation — especially category "consistency" entries that define established patterns
 - Read `lessons.yml` for past insights that inform approach
+- If brownfield (or analysis artifacts exist):
+  - Read `.shaktra/analysis/structure.yml` for detected architectural patterns and layer boundaries
+  - Read `.shaktra/analysis/practices.yml` for canonical code examples per practice area
 - Identify existing patterns in the codebase relevant to this story (Glob/Grep for similar modules)
 
 ### 3. Design Component Structure
@@ -66,8 +70,13 @@ Order components to minimize coupling:
 
 ### 6. Identify Patterns
 
-Select patterns from `quality-principles.md` that apply to this story:
-- For each pattern: which component, what the guidance is
+Select patterns from three sources, in priority order:
+
+1. **Established project patterns** — from `decisions.yml` (category: consistency) and the design doc's pattern justification. These are non-negotiable unless the plan explicitly proposes a deviation with justification.
+2. **Detected codebase patterns** — from `structure.yml` (architectural patterns) and `practices.yml` (canonical examples). New components should follow existing conventions. If `practices.yml` has a canonical example for this pattern type, reference it.
+3. **Quality principles** — from `quality-principles.md`. Select principles that apply to this story's scope.
+
+For each pattern: which component, what the guidance is, and the source (decision/analysis/principle).
 
 ### 7. Identify Scope Risks
 

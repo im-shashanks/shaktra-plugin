@@ -27,6 +27,8 @@ This skill never restates severity definitions, quality dimensions, or schema st
 |---|---|
 | `testing-practices.md` | 12 core testing principles — behavioral testing, TDD cycle, isolation, mocking, edge cases |
 | `coding-practices.md` | Implementation patterns, error handling, security, observability, resilience essentials |
+| `resilience-practices.md` | Retry with backoff+jitter, timeouts by operation type, circuit breaker, fallback hierarchy, failure mode table |
+| `concurrency-practices.md` | Idempotency patterns (3 types), optimistic locking, atomic operations, concurrent test harness |
 
 ## How Agents Use This Skill
 
@@ -41,6 +43,8 @@ This skill never restates severity definitions, quality dimensions, or schema st
 **developer** loads this skill to write production code:
 - Follows `coding-practices.md` for implementation patterns
 - Applies security, observability, and resilience essentials
+- References `resilience-practices.md` for retry, timeout, circuit breaker, and fallback patterns
+- References `concurrency-practices.md` for idempotency, locking, and atomic operations
 
 ## References
 

@@ -30,6 +30,7 @@ Ask the user for the following project details. Present these as a single prompt
 | `name` | Project name? | Current directory name | Any string |
 | `type` | Greenfield or brownfield? | greenfield | `greenfield`, `brownfield` |
 | `language` | Primary language? | _(none)_ | `python`, `typescript`, `javascript`, `go`, `java`, `rust`, `ruby`, `php`, `csharp`, `other` |
+| `architecture` | Architecture style? | _(none)_ | `layered`, `hexagonal`, `clean`, `mvc`, `feature-based`, `event-driven`, or blank |
 | `test_framework` | Test framework? | Infer from language | `pytest`, `jest`, `vitest`, `mocha`, `go test`, `junit`, `rspec`, `phpunit`, `xunit`, or custom |
 | `coverage_tool` | Coverage tool? | Infer from language | `coverage.py`, `istanbul/nyc`, `c8`, `go cover`, `jacoco`, `simplecov`, `phpunit`, `coverlet`, or custom |
 | `package_manager` | Package manager? | Infer from language | `pip`, `poetry`, `uv`, `npm`, `yarn`, `pnpm`, `go mod`, `maven`, `gradle`, `cargo`, `bundler`, `composer`, `dotnet`, or custom |
@@ -76,10 +77,15 @@ project:
   name: "<user's project name>"
   type: "<greenfield or brownfield>"
   language: "<user's language>"
+  architecture: "<user's architecture style, or empty>"
   test_framework: "<user's test framework>"
   coverage_tool: "<user's coverage tool>"
   package_manager: "<user's package manager>"
 ```
+
+**Architecture field notes:**
+- For **greenfield**: ask user to choose an architecture style. If unsure, leave blank — the architect agent will propose one in the first design doc and it gets recorded in `decisions.yml`.
+- For **brownfield**: leave blank at init. The `/shaktra:analyze` workflow detects the existing architecture (D1: structure.yml) and the user can populate this field after analysis.
 
 All other sections (`tdd`, `quality`, `analysis`, `sprints`) retain their template defaults.
 

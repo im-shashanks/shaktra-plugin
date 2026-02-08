@@ -33,9 +33,13 @@ You receive:
 Read ALL of the following before starting the design:
 - PRD at `.shaktra/prd.md`
 - Architecture at `.shaktra/architecture.md`
-- `.shaktra/memory/decisions.yml` — prior decisions that constrain this design
+- `.shaktra/settings.yml` — project type, language, and `project.architecture` (the declared architecture style)
+- `.shaktra/memory/decisions.yml` — prior decisions that constrain this design (especially category "consistency" for pattern decisions)
 - `.shaktra/memory/lessons.yml` — past insights that inform approach
-- If `analysis_path` provided (brownfield): read `.shaktra/analysis/` artifacts for existing patterns, interfaces, dependencies, and naming conventions
+- If brownfield (or `analysis_path` provided): read these analysis artifacts:
+  - `.shaktra/analysis/structure.yml` — detected architectural patterns, module boundaries, layer dependencies
+  - `.shaktra/analysis/practices.yml` — 14 practice areas with canonical code examples
+  - Other `.shaktra/analysis/` artifacts for interfaces, dependencies, and naming conventions
 - If `gap_answers` provided: integrate them into your understanding
 
 ### 2. Gap Analysis
@@ -76,6 +80,12 @@ For each section:
 - Reference quality principles from `quality-principles.md` where design decisions align with specific principles.
 - If a section would be empty or trivially obvious, omit it. No section earns its place by existing.
 
+**Section 3 — Pattern Justification (mandatory):**
+- Verify the proposed solution aligns with `settings.project.architecture`. If `architecture` is set, the design must fit that style. If deviating, explain why and propose a `decisions.yml` update.
+- For brownfield: cross-reference `structure.yml` detected patterns and `practices.yml` canonical examples. New components must match existing patterns unless the design explicitly justifies a deviation.
+- For greenfield with no `architecture` set: propose an architecture style in Section 3 and recommend the user update `settings.project.architecture`. Record the choice as an `important_decision` (category: consistency).
+- Name specific design patterns used (repository, factory, strategy, etc.) and why they fit this feature.
+
 Store at `.shaktra/designs/<project-name>-design.md`.
 
 ## Output
@@ -90,4 +100,5 @@ One of:
 - No placeholder sections. "TBD" or "N/A" means the section should not exist.
 - All values concrete. Every number, threshold, timeout, and limit must be specific.
 - Brownfield awareness. If analysis artifacts exist, respect existing patterns. Don't redesign what works.
+- Pattern alignment. Every design must justify its pattern choices in Section 3. Brownfield designs must reference `structure.yml` and `practices.yml`. Greenfield designs must propose an architecture style.
 - Gap questions are structured. Always include category, context, and options where possible.

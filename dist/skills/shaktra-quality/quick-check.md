@@ -1,6 +1,6 @@
-# Quick-Check — ~35 High-Impact Checks
+# Quick-Check — ~36 High-Impact Checks
 
-35 checks organized by gate. The sw-quality agent loads all checks regardless of tier and applies the gate-specific subset during each TDD phase review.
+36 checks organized by gate. The sw-quality agent loads all checks regardless of tier and applies the gate-specific subset during each TDD phase review.
 
 **Check depth behavior** (from `story-tiers.md`):
 - **Quick** (Trivial/Small): All checks applied; P2+ findings reported as observations, not blockers.
@@ -65,7 +65,7 @@ Every error code from the story's `error_handling` must have at least one test.
 
 Tests must assert behavior (outcomes), not just that a mock was called.
 
-**Look for:** `assert mock.called`, `mock.assert_called_with(...)`, `verify(mock).method()` as the ONLY assertion in a test.
+**Look for:** `assert mock.called`, `mock.assert_called_with(...)` as the ONLY assertion in a test.
 **BAD:** `mock_db.save.assert_called_once_with(user)` — proves wiring, not behavior.
 **GOOD:** `assert get_user(saved_id) == expected_user` — proves the system works.
 
@@ -73,15 +73,13 @@ Tests must assert behavior (outcomes), not just that a mock was called.
 
 Mock count should be less than real assertion count. Tests with 5+ mocks test nothing real.
 
-**Look for:** Tests where setup is mostly `mock.patch` and assertions are mostly `mock.assert_called`.
-**BAD:** 6 mocks, 2 assertions — the test exercises mocking framework, not production code.
+**BAD:** 6 mocks, 2 assertions — exercises mocking framework, not production code.
 **GOOD:** 1 mock (external API), 4 assertions on actual return values and side effects.
 
 ### TQ-04 — Test Isolation (P1)
 
 No shared mutable state between tests. Each test creates its own fixtures.
 
-**Look for:** Module-level mutable variables, class attributes mutated in tests, shared database state without cleanup.
 **BAD:** `test_data = []` at module level, tests append to it, later tests depend on contents.
 **GOOD:** Each test creates its own list via fixture or factory.
 
@@ -89,7 +87,6 @@ No shared mutable state between tests. Each test creates its own fixtures.
 
 Tests must not use real time, random, or non-deterministic operations.
 
-**Look for:** `time.time()`, `datetime.now()`, `random.random()`, `Date.now()`, `Math.random()`, `time.sleep()` in test files.
 **BAD:** `assert result.created_at == datetime.now()` — fails if clock ticks between call and assert.
 **GOOD:** `clock = FakeClock(fixed_time); assert result.created_at == fixed_time`.
 
@@ -97,7 +94,6 @@ Tests must not use real time, random, or non-deterministic operations.
 
 Every test has at least one meaningful assertion. Tests without assertions prove nothing.
 
-**Look for:** Test functions with no `assert`, `expect`, `should`, or explicit assertion calls.
 **BAD:** `def test_create_user(): create_user("test")` — runs code but verifies nothing.
 **GOOD:** `def test_create_user(): user = create_user("test"); assert user.name == "test"`.
 
@@ -105,7 +101,6 @@ Every test has at least one meaningful assertion. Tests without assertions prove
 
 Mock external dependencies (APIs, DBs, filesystems). Never mock internal project code.
 
-**Look for:** `mock.patch` targeting internal modules, private methods, or sibling classes.
 **BAD:** `@mock.patch("myapp.services.user_service.validate")` — mocking internal logic.
 **GOOD:** `@mock.patch("myapp.services.user_service.http_client.post")` — mocking external boundary.
 
@@ -129,7 +124,6 @@ AC scenarios from `io_examples` have corresponding tests with matching inputs an
 
 Tests catch specific exception types, not bare `Exception` or `Error`.
 
-**Look for:** `pytest.raises(Exception)`, `expect(() => ...).toThrow()` without a type.
 **BAD:** `with pytest.raises(Exception):` — any exception passes, including unrelated ones.
 **GOOD:** `with pytest.raises(OrderNotFoundError, match="ORD-123"):`.
 
@@ -137,7 +131,6 @@ Tests catch specific exception types, not bare `Exception` or `Error`.
 
 Tests should survive internal refactoring. If changing a private method breaks a test, the test is structural.
 
-**Look for:** Tests that access private attributes, verify internal call sequences, or assert on implementation details.
 **BAD:** `assert obj._internal_cache == {"key": "value"}` — coupled to internal state.
 **GOOD:** `assert obj.get("key") == "value"` — tests through the public interface.
 
@@ -145,15 +138,13 @@ Tests should survive internal refactoring. If changing a private method breaks a
 
 At least 30% of tests should be negative (testing failure scenarios).
 
-**Look for:** Test files dominated by happy-path tests with minimal error case coverage.
-**BAD:** 10 tests, all happy path. Zero negative tests.
+**BAD:** 10 tests, all happy path — zero negative tests.
 **GOOD:** 10 tests: 7 happy path, 3 negative (invalid input, timeout, auth failure).
 
 ### TQ-13 — Descriptive Test Names (P2)
 
 Test names follow given/when/then or behavior-based naming that conveys intent.
 
-**Look for:** Test names like `test_1`, `test_process`, `test_it_works`.
 **BAD:** `test_handler` — what handler? What scenario? What outcome?
 **GOOD:** `test_given_expired_token_when_access_resource_then_returns_401`.
 
@@ -298,3 +289,12 @@ Functions should have a single responsibility. If the name contains "and", it sh
 **Look for:** Functions over 50 lines, functions doing unrelated things, function names with "and".
 **BAD:** `validate_and_save_and_notify(user)` — three responsibilities.
 **GOOD:** `validate(user)`, `save(user)`, `notify(user)` — composed by the caller.
+
+### CQ-18 — Resource Lifecycle Management (P1)
+
+Resources that are acquired must be released — file handles, database connections, network sockets, locks, temporary files.
+
+**Look for:** `open()` without `with`, manual `.close()` without try/finally, acquired locks without guaranteed release.
+**BAD:** `f = open(path); data = f.read()` — leaks if exception occurs before close.
+**GOOD:** `with open(path) as f: data = f.read()` — context manager guarantees cleanup.
+Use `with`/context managers (Python), `defer` (Go), try-with-resources (Java), `using` (C#), or RAII (Rust).

@@ -26,9 +26,10 @@ plan_summary:
     edge_cases: [string]
   implementation_order: [string] # file paths, minimal-dependency order
   patterns_applied:
-    - pattern: string        # principle or pattern name
+    - pattern: string        # design pattern, architectural pattern, or quality principle name
       location: string       # file or component where applied
       guidance: string       # actionable implementation instruction
+      source: string         # "decision" | "analysis" | "principle" | "design-doc"
   scope_risks:
     - risk: string           # what could go wrong
       likelihood: string     # "low" | "medium" | "high"
@@ -62,6 +63,14 @@ important_decisions:
     summary: string
     guidance: [string]    # 1-5 actionable rules
 ```
+
+**Pattern decisions must be captured.** During implementation, if any of the following occur, add an `important_decision` with `category: consistency`:
+- A **new design pattern** is introduced (e.g., "Repository pattern for all data access in this project")
+- A **new architectural convention** is established (e.g., "All services accept dependencies via constructor injection")
+- A **deviation from existing patterns** is made with justification
+- A **canonical example** worth replicating is created (reference the file path in guidance)
+
+These decisions persist in `decisions.yml` and are loaded by the architect, sw-engineer, and developer agents for all future stories — ensuring pattern coherence across the product lifecycle.
 
 ## Quality Findings
 

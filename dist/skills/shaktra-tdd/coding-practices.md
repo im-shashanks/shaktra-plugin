@@ -111,6 +111,28 @@ When rendering user-provided data in HTML, logs, or error messages, encode the o
 - Log context: Sanitize newlines and control characters to prevent log injection
 - Error messages: Never include raw user input in messages shown to other users
 
+### Web Security Patterns
+
+**XSS Prevention:**
+- Use framework-provided auto-escaping for templates (Jinja2 `autoescape=True`, React JSX, Go `html/template`). Never use `|safe`, `dangerouslySetInnerHTML`, or `text/template` with user data.
+- Validate and sanitize rich-text input with an allowlist-based sanitizer (e.g., Bleach, DOMPurify). Blocklists are always incomplete.
+- Set `Content-Security-Policy` headers to restrict script sources. At minimum: `default-src 'self'; script-src 'self'`.
+
+**CSRF Prevention:**
+- Require a CSRF token on all state-changing requests (POST, PUT, DELETE). Most frameworks provide middleware — enable it.
+- Verify the `Origin` or `Referer` header matches the expected domain on state-changing requests.
+- Use `SameSite=Lax` or `SameSite=Strict` on session cookies.
+
+**Deserialization Safety:**
+- Never deserialize untrusted data with formats that execute code: Python `pickle`/`shelve`, Java `ObjectInputStream`, Ruby `Marshal.load`, PHP `unserialize`.
+- Use data-only formats (JSON, MessagePack, Protocol Buffers) for untrusted input.
+- If YAML is required, use `yaml.safe_load()` — never `yaml.load()` without `Loader=SafeLoader`.
+
+**Authentication & Session:**
+- Hash passwords with `bcrypt`, `scrypt`, or `argon2` — never MD5, SHA-1, or SHA-256 alone.
+- Generate session tokens with a cryptographic RNG (`secrets.token_urlsafe()`, `crypto.randomBytes()`). Never use predictable values.
+- Set cookie flags: `HttpOnly`, `Secure`, `SameSite`.
+
 ---
 
 ## Observability Essentials

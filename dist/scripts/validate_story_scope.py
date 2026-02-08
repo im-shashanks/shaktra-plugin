@@ -32,8 +32,12 @@ ALWAYS_ALLOWED = (
 try:
     import yaml
 except ImportError:
-    print("shaktra: PyYAML not installed — scope check skipped", file=sys.stderr)
-    sys.exit(0)
+    print(
+        "BLOCKED: PyYAML is required for Shaktra hooks.\n"
+        "Install with: pip install pyyaml",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 
 def find_active_story_id() -> str | None:
@@ -104,7 +108,14 @@ def main() -> None:
 
     files = story.get("files", [])
     if not isinstance(files, list) or not files:
-        sys.exit(0)
+        # No files declared — block with guidance rather than silently allowing all writes
+        tier = str(story.get("tier", "")).lower()
+        print(
+            f"BLOCKED: Story '{story_id}' has no 'files' field declared.\n"
+            f"  Even {tier or 'unknown'}-tier stories must declare their file scope.\n"
+            f"  Add a 'files' list to .shaktra/stories/{story_id}.yml"
+        )
+        sys.exit(2)
 
     for declared in files:
         if not isinstance(declared, str):

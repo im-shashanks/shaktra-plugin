@@ -48,12 +48,17 @@ You receive:
 - Read `handoff.yml` for `plan_summary` (patterns_applied, scope_risks, implementation_order)
 - Read test files to understand what must pass
 - Read `coding-practices.md` for implementation patterns
+- Read `.shaktra/memory/decisions.yml` — filter for `status: active` decisions relevant to this story's scope. These are binding project-wide rules (especially category "consistency" for established patterns).
+- If brownfield (or analysis artifacts exist):
+  - Read `.shaktra/analysis/practices.yml` — find canonical examples matching the patterns in `plan_summary.patterns_applied`. When a canonical example exists, use it as the starting template for new code in that pattern.
+  - Read `.shaktra/analysis/structure.yml` — verify new files go in the correct layer/module per detected architecture
 
 ### 2. Implement in Order
 
 Follow `plan_summary.implementation_order` exactly:
 - Build each component according to its defined responsibility
-- Apply patterns from `plan_summary.patterns_applied`
+- Apply patterns from `plan_summary.patterns_applied` — when a pattern has a canonical example from `practices.yml`, match its structure (file naming, class naming, method signatures, DI approach)
+- Follow active `decisions.yml` rules — especially pattern consistency decisions
 - Implement prevention strategies from `plan_summary.scope_risks`
 - After each component: run the relevant tests to verify progress
 

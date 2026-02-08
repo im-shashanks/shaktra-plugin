@@ -2,6 +2,7 @@ project:
   name: ""
   type: ""              # greenfield | brownfield
   language: ""          # python | typescript | go | java | rust | etc.
+  architecture: ""      # layered | hexagonal | clean | mvc | feature-based | event-driven
   test_framework: ""
   coverage_tool: ""
   package_manager: ""

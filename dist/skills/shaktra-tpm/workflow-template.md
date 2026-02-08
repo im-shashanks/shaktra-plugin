@@ -188,6 +188,34 @@ Present sprint summary:
 
 ---
 
+## Workflow: Close Sprint
+
+Close the current sprint, record velocity (including partial completion), and move incomplete stories to the backlog.
+
+**Prerequisite:** `.shaktra/sprints.yml` must exist with a `current_sprint`. If missing, inform user.
+
+1. Spawn **scrummaster** (mode: close-sprint)
+   - Scrummaster reads `.shaktra/sprints.yml` and all story handoffs in `.shaktra/stories/`
+   - Determines completed vs incomplete stories based on handoff `current_phase == "complete"`
+   - Records velocity: `planned_points` (committed) and `completed_points` (sum of completed story points)
+   - Appends velocity entry to `velocity.history`, recalculates `average` and `trend`
+   - Moves incomplete stories to `backlog` with their existing priority
+   - Clears `current_sprint` (or advances to next planned sprint if exists)
+   - Writes updated `.shaktra/sprints.yml`
+2. Spawn **memory-curator** with workflow_type: "sprint-close"
+
+### Completion
+
+Present sprint close summary:
+- Sprint ID that was closed
+- Completed: {N} stories, {points} points
+- Incomplete: {N} stories, {points} points (moved to backlog)
+- Velocity: {completed_points}/{planned_points} ({percentage}%)
+- Updated velocity trend
+- Recommend: "plan next sprint" or `/shaktra:tpm sprint` to plan the next sprint
+
+---
+
 ## Error Handling
 
 ### Agent Failure

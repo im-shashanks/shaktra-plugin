@@ -12,8 +12,12 @@ import sys
 try:
     import yaml
 except ImportError:
-    print("shaktra: PyYAML not installed — P0 check skipped", file=sys.stderr)
-    sys.exit(0)
+    print(
+        "BLOCKED: PyYAML is required for Shaktra hooks.\n"
+        "Install with: pip install pyyaml",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 
 def find_active_story() -> dict | None:

@@ -9,6 +9,7 @@ project:
   name: string            # required — project display name
   type: string            # "greenfield" | "brownfield"
   language: string        # "python" | "typescript" | "go" | "java" | "rust" | etc.
+  architecture: string    # "layered" | "hexagonal" | "clean" | "mvc" | "feature-based" | "event-driven" | ""
   test_framework: string  # "pytest" | "jest" | "vitest" | "go test" | etc.
   coverage_tool: string   # "coverage" | "istanbul" | "c8" | etc.
   package_manager: string # "pip" | "npm" | "pnpm" | "cargo" | etc.
@@ -32,6 +33,7 @@ sprints:
   enabled: boolean              # default: true
   velocity_tracking: boolean    # default: true
   sprint_duration_weeks: integer # default: 2
+  default_velocity: integer     # default: 15 — story points per sprint, used when no velocity history exists
 ```
 
 ## Consumer Reference
@@ -39,6 +41,7 @@ sprints:
 | Setting | Read By |
 |---|---|
 | `project.*` | init skill (writes), all agents (context) |
+| `project.architecture` | architect (validates alignment), sw-engineer (pattern selection), developer (code structure) |
 | `tdd.coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
 | `tdd.hotfix_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
 | `quality.p1_threshold` | sw-quality, code-reviewer, severity-taxonomy merge gate |
@@ -49,3 +52,4 @@ sprints:
 | `sprints.enabled` | scrummaster, tpm-quality |
 | `sprints.velocity_tracking` | scrummaster |
 | `sprints.sprint_duration_weeks` | scrummaster |
+| `sprints.default_velocity` | scrummaster (fallback when no velocity history) |

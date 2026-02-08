@@ -32,7 +32,6 @@ The auto-detected tier is a suggestion. The user or TPM can override it explicit
 |---|---|---|---|---|
 | Failing test before code (Red) | Skip | Required | Required | Required |
 | Tests pass after code (Green) | Required | Required | Required | Required |
-| Refactor phase | Skip | Optional | Required | Required |
 | Coverage threshold | `settings.tdd.hotfix_coverage_threshold` | 80% | `settings.tdd.coverage_threshold` | 95% |
 | Quality check depth | Quick | Quick | Full | Thorough |
 | Design review | Skip | Skip | Required | Required |

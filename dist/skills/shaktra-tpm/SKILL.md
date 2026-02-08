@@ -21,6 +21,7 @@ Classify the user's request into one of these intents:
 | `enrich` | "enrich stories", "fill in story details", "add test specs to stories" | Enrich |
 | `hotfix` | "hotfix", "quick fix", "trivial fix", "one-liner" | Hotfix |
 | `sprint` | "plan sprint", "prioritize backlog", "sprint planning", "re-prioritize" | Sprint |
+| `close-sprint` | "close sprint", "end sprint", "finish sprint", "sprint done" | Close Sprint |
 
 If the intent is ambiguous, ask the user to clarify before proceeding.
 
@@ -181,6 +182,18 @@ Read all stories from .shaktra/stories/. Apply RICE priorities, sort by dependen
 priority, and allocate to sprints respecting capacity. Write results to .shaktra/sprints.yml.
 ```
 
+### Scrummaster — Close Sprint
+
+```
+You are the shaktra-scrummaster agent. Close the current sprint.
+
+Sprint file: .shaktra/sprints.yml
+Stories directory: .shaktra/stories/
+
+Follow the close-sprint process: record partial velocity, move incomplete stories to backlog,
+and advance to the next sprint if one exists.
+```
+
 ### TPM Quality — Review Artifact
 
 ```
@@ -216,6 +229,7 @@ Extract lessons that meet the capture bar. Append to .shaktra/memory/lessons.yml
 | Enrich | Story files in `.shaktra/stories/`, `.shaktra/settings.yml` | Run stories workflow first |
 | Hotfix | `.shaktra/settings.yml` | Run `/shaktra:init` |
 | Sprint | Stories in `.shaktra/stories/`, `.shaktra/settings.yml` | Run stories workflow first |
+| Close Sprint | `.shaktra/sprints.yml` with active `current_sprint` | Run sprint planning first |
 
 ---
 

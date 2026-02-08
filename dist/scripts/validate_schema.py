@@ -13,8 +13,12 @@ import sys
 try:
     import yaml
 except ImportError:
-    print("shaktra: PyYAML not installed — schema check skipped", file=sys.stderr)
-    sys.exit(0)
+    print(
+        "BLOCKED: PyYAML is required for Shaktra hooks.\n"
+        "Install with: pip install pyyaml",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 STORY_RE = re.compile(r"\.shaktra/stories/[^/]+\.yml$")
 HANDOFF_RE = re.compile(r"\.shaktra/stories/[^/]+/handoff\.yml$")

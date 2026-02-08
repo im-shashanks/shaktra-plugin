@@ -146,6 +146,42 @@ Never over-commit. If the next story exceeds remaining capacity, it goes to the 
 
 ---
 
+## Mode: CLOSE SPRINT
+
+Close the current sprint, record velocity (partial or full), and move incomplete stories to the backlog.
+
+### Process
+
+1. **Load state**
+   - Read `.shaktra/sprints.yml` for `current_sprint` and `velocity.history`
+   - Read handoff files in `.shaktra/stories/*/handoff.yml` for each story in `current_sprint.stories`
+
+2. **Classify story completion**
+   - **Completed:** handoff `current_phase == "complete"`
+   - **Incomplete:** any other phase (including "failed")
+   - Sum `completed_points` from completed stories' `metadata.story_points`
+
+3. **Record velocity**
+   - Append to `velocity.history`:
+     ```yaml
+     - sprint_id: "{current_sprint.id}"
+       planned_points: {current_sprint.committed_points}
+       completed_points: {sum of completed story points}
+     ```
+   - Recalculate `velocity.average` and `velocity.trend` using the formulas in `sprint-schema.md`
+
+4. **Move incomplete stories to backlog**
+   - For each incomplete story: add to `backlog` with its existing `points`, `priority`, and `blocked_by`
+   - Reset incomplete story handoffs to `current_phase: "plan"` with empty `completed_phases`
+
+5. **Clear current sprint**
+   - Set `current_sprint` to null
+   - If additional sprints were pre-planned, advance the next one to `current_sprint`
+
+6. **Write** updated `.shaktra/sprints.yml`
+
+---
+
 ## Quality Loop Integration
 
 After the TPM dispatches quality review:
