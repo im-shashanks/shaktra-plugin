@@ -108,7 +108,7 @@ memory_captured: boolean  # default: false — must be true before completion
 
 ## Validation Rules
 
-1. `current_phase` must be one of the 6 allowed values.
+1. `current_phase` must be one of the 7 allowed values.
 2. `completed_phases` must be a prefix of [plan, tests, code, quality] — phases cannot be skipped.
 3. `tier` must match the story file's tier.
 4. `test_summary.test_count` must match `plan_summary.test_plan.test_count` (or include a variance note).

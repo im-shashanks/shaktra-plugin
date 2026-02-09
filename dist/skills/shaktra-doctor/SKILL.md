@@ -7,7 +7,7 @@ description: >
 
 # /shaktra:doctor — Framework Health Check
 
-Read-only diagnostic. Runs 9 checks across 3 categories. Never creates, modifies, or deletes any file.
+Read-only diagnostic. Runs 10 checks across 3 categories. Never creates, modifies, or deletes any file.
 
 Use `${CLAUDE_PLUGIN_ROOT}` to locate the installed plugin directory for all plugin structure checks.
 
@@ -53,6 +53,13 @@ For each SKILL.md that references sub-files (files within the same skill directo
 
 PASS: All referenced sub-files exist.
 FAIL: List each dangling reference with the SKILL.md that references it and the missing file path.
+
+### Check 10 — Python Dependencies
+
+Run `python3 -c "import yaml"` via Bash. Check the return code.
+
+PASS: PyYAML is installed and importable.
+FAIL: PyYAML is not installed → run: pip install pyyaml
 
 ---
 
@@ -126,6 +133,7 @@ Present results as a structured report:
 - [PASS] Check 2 — Skill Directories: 13/13 skills found with valid frontmatter
 - [PASS] Check 3 — Hook Scripts: 4/4 scripts found and executable
 - [PASS] Check 4 — Sub-File References: All references resolve
+- [PASS] Check 10 — Python Dependencies: PyYAML installed
 
 ### Category 2: Project Health
 - [PASS] Check 5 — Settings File: All required sections and fields present
@@ -136,7 +144,7 @@ Present results as a structured report:
 - [PASS] Check 8 — Severity Taxonomy: Defined in exactly 1 file
 - [PASS] Check 9 — No Orphaned Files: All sub-files referenced
 
-Summary: 9/9 checks passed
+Summary: 10/10 checks passed
 ```
 
 For any FAIL result, include actionable detail immediately after the check line:

@@ -10,16 +10,6 @@ import os
 import re
 import sys
 
-try:
-    import yaml
-except ImportError:
-    print(
-        "BLOCKED: PyYAML is required for Shaktra hooks.\n"
-        "Install with: pip install pyyaml",
-        file=sys.stderr,
-    )
-    sys.exit(2)
-
 STORY_RE = re.compile(r"\.shaktra/stories/[^/]+\.yml$")
 HANDOFF_RE = re.compile(r"\.shaktra/stories/[^/]+/handoff\.yml$")
 
@@ -96,6 +86,16 @@ def main() -> None:
     is_handoff = bool(HANDOFF_RE.search(rel))
     if not is_story and not is_handoff:
         sys.exit(0)
+
+    try:
+        import yaml
+    except ImportError:
+        print(
+            "BLOCKED: PyYAML is required for Shaktra hooks.\n"
+            "Install with: pip install pyyaml",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
     try:
         with open(file_path) as f:

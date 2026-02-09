@@ -14,6 +14,17 @@ description: >
 
 ## Execution Steps
 
+### Step 0: Verify Prerequisites
+
+Run `python3 -c "import yaml"` via Bash.
+
+If the command fails (non-zero exit code), stop and report:
+  "Shaktra requires PyYAML for its hook scripts.
+   Install with: pip install pyyaml
+   Then run /shaktra:init again."
+
+Do not proceed to Step 1 until PyYAML is confirmed installed.
+
 ### Step 1: Guard Against Double Initialization
 
 Check if `.shaktra/` directory exists in the current working directory.

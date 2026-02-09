@@ -29,18 +29,22 @@ ALWAYS_ALLOWED = (
     "requirements.txt",
 )
 
-try:
-    import yaml
-except ImportError:
-    print(
-        "BLOCKED: PyYAML is required for Shaktra hooks.\n"
-        "Install with: pip install pyyaml",
-        file=sys.stderr,
-    )
-    sys.exit(2)
+
+def _import_yaml():
+    """Import yaml lazily so operations that don't need it work without PyYAML."""
+    try:
+        import yaml
+        return yaml
+    except ImportError:
+        print(
+            "BLOCKED: PyYAML is required for Shaktra hooks.\n"
+            "Install with: pip install pyyaml",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
 
-def find_active_story_id() -> str | None:
+def find_active_story_id(yaml) -> str | None:
     """Return the story_id for the active story, or None."""
     project = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
     pattern = os.path.join(project, ".shaktra", "stories", "*", "handoff.yml")
@@ -93,7 +97,9 @@ def main() -> None:
         elif rel == allowed or rel.endswith("/" + allowed):
             sys.exit(0)
 
-    story_id = find_active_story_id()
+    yaml = _import_yaml()
+
+    story_id = find_active_story_id(yaml)
     if story_id is None:
         sys.exit(0)
 

@@ -9,18 +9,8 @@ import glob
 import os
 import sys
 
-try:
-    import yaml
-except ImportError:
-    print(
-        "BLOCKED: PyYAML is required for Shaktra hooks.\n"
-        "Install with: pip install pyyaml",
-        file=sys.stderr,
-    )
-    sys.exit(2)
 
-
-def find_active_story() -> dict | None:
+def find_active_story(yaml) -> dict | None:
     """Return the handoff dict for the active story, or None."""
     project = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
     pattern = os.path.join(project, ".shaktra", "stories", "*", "handoff.yml")
@@ -46,7 +36,23 @@ def main() -> None:
     if os.environ.get("SHAKTRA_SKIP_P0_CHECK"):
         sys.exit(0)
 
-    handoff = find_active_story()
+    # Check if any handoff files exist before importing PyYAML
+    project = os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd())
+    pattern = os.path.join(project, ".shaktra", "stories", "*", "handoff.yml")
+    if not glob.glob(pattern):
+        sys.exit(0)
+
+    try:
+        import yaml
+    except ImportError:
+        print(
+            "BLOCKED: PyYAML is required for Shaktra hooks.\n"
+            "Install with: pip install pyyaml",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
+    handoff = find_active_story(yaml)
     if handoff is None:
         sys.exit(0)
 
