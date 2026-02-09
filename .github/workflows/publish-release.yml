@@ -82,6 +82,9 @@ jobs:
           .DS_Store
           __pycache__/
           *.py[codz]
+          .claude/
+          .local/
+          .venv/
           GITIGNORE
 
       - name: Validate release structure

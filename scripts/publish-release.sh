@@ -93,6 +93,9 @@ cat > "$BUILD/.gitignore" << 'GITIGNORE'
 .DS_Store
 __pycache__/
 *.py[codz]
+.claude/
+.local/
+.venv/
 GITIGNORE
 
 # --- Validate ---
