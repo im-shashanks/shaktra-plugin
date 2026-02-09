@@ -52,7 +52,11 @@ def main() -> None:
 
     findings = handoff.get("quality_findings", [])
     if not isinstance(findings, list):
-        sys.exit(0)
+        print(
+            "BLOCKED: 'quality_findings' in handoff is not a list.\n"
+            "  Cannot verify P0 status — blocking until corrected."
+        )
+        sys.exit(2)
 
     p0s = [f for f in findings if str(f.get("severity", "")).upper() == "P0"]
     if not p0s:
@@ -62,7 +66,7 @@ def main() -> None:
     for f in p0s:
         loc = f.get("file", "unknown")
         line = f.get("line", "")
-        desc = f.get("description", "no description")
+        desc = f.get("issue", "no description")
         loc_str = f"{loc}:{line}" if line else loc
         print(f"  P0  {loc_str} — {desc}")
 

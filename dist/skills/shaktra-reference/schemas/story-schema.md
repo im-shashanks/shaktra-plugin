@@ -85,7 +85,7 @@ edge_cases:
     expected: string        # correct behavior
     test: string            # test id
   # Categories: invalid_input, dependency_failure, duplicate, concurrency,
-  #   limits, time, config, lifecycle, capacity, format
+  #   limits, time, config, startup_shutdown, capacity, upgrade
   # Cover at least 5 of 10 categories for Large tier
 determinism:
   time_injection: string    # how time is injected for testability

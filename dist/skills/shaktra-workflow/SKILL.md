@@ -22,7 +22,7 @@ Classify intent using a **noun-first, two-signal model**. Shaktra-specific nouns
 | Bug Fix | bug, bugfix, debug, diagnose (code context), error message, stack trace, "why does this fail" | debug, diagnose, fix (with bug noun), investigate | `/shaktra:bugfix` |
 | Dev | ST-### (without "review"), tests (writing context), code, implementation, TDD | develop, implement, build, code, write, resume | `/shaktra:dev` |
 | Review | PR, pull request, PR #/URL, "review" + ST-### | review (with PR/story noun) | `/shaktra:review` |
-| Analyze | codebase, brownfield, analysis, dimension names (architecture, practices, dependencies, tech-debt, data-flows, critical-paths, domain-model, entry-points) | analyze (codebase context) | `/shaktra:analyze` |
+| Analyze | codebase, brownfield, analysis, dimension names (architecture, practices, dependencies, tech-debt, data-flows, critical-paths, domain-model, entry-points), debt, tech debt, debt strategy, dependency audit, dependency health, upgrade dependencies | analyze (codebase context), prioritize, audit | `/shaktra:analyze` |
 | Init | "initialize", "set up shaktra", "init" | init, initialize, set up | `/shaktra:init` |
 | Doctor | "health", "doctor", "diagnose", "config check", "validation" | check, diagnose, validate | `/shaktra:doctor` |
 | General | No Shaktra-specific noun, domain questions (AWS, ML, docs), general technical questions | — | `/shaktra:general` |

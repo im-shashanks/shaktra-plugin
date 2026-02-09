@@ -1,6 +1,6 @@
 # Analysis Output Schemas
 
-This file defines the YAML schemas for all 12 output files produced by `/shaktra:analyze`. Used by the orchestrator for validation in Stage 3 and by downstream agents to understand available data.
+This file defines the YAML schemas for all output files produced by `/shaktra:analyze` — 12 primary artifacts from the analysis pipeline plus 2 derivative artifacts from strategy workflows. Used by the orchestrator for validation in Stage 3 and by downstream agents to understand available data.
 
 **Used by:** shaktra-analyze SKILL.md (validation), downstream agents (consumption reference).
 
@@ -29,7 +29,9 @@ Every analysis artifact (except `static.yml`, `manifest.yml`, `checksum.yml`) MU
 | `data-flows.yml` | ~500 tokens | Flow count by tier, integration points, critical gotchas |
 | `critical-paths.yml` | ~400 tokens | Critical path count, highest-risk areas, key lessons |
 
-**Total summary budget:** ~3,750 tokens — all summaries loadable simultaneously without context pressure.
+**Total summary budget:** ~3,750 tokens — all primary summaries loadable simultaneously without context pressure.
+
+Derivative artifacts (`debt-strategy.yml`, `dependency-audit.yml`) define their own ~400 token summary budgets in their respective workflow files. These are loaded on-demand, not with the primary summaries.
 
 ---
 
@@ -114,80 +116,25 @@ status: pending | in_progress | complete | partial
 
 stages:
   pre_analysis:
-    static:
-      status: pending | complete
-      completed_at: ISO-8601 | null
-    overview:
-      status: pending | complete
-      completed_at: ISO-8601 | null
+    static:  {status: pending | complete, completed_at: ISO-8601 | null}
+    overview: {status: pending | complete, completed_at: ISO-8601 | null}
 
   dimensions:
+    # D1 through D8 — each dimension has this structure:
     D1:
-      name: Architecture & Structure
-      status: pending | in_progress | complete | failed
-      output_file: structure.yml
+      name: Architecture & Structure     # D2: Domain Model, D3: Entry Points, D4: Practices
+      status: pending | in_progress | complete | failed  # D5: Dependencies, D6: Tech Debt
+      output_file: structure.yml         # D7: Data Flows, D8: Critical Paths
       started_at: ISO-8601 | null
       completed_at: ISO-8601 | null
       error: string | null
-    D2:
-      name: Domain Model & Business Rules
-      status: pending | in_progress | complete | failed
-      output_file: domain-model.yml
-      started_at: ISO-8601 | null
-      completed_at: ISO-8601 | null
-      error: string | null
-    D3:
-      name: Entry Points & Interfaces
-      status: pending | in_progress | complete | failed
-      output_file: entry-points.yml
-      started_at: ISO-8601 | null
-      completed_at: ISO-8601 | null
-      error: string | null
-    D4:
-      name: Coding Practices & Conventions
-      status: pending | in_progress | complete | failed
-      output_file: practices.yml
-      started_at: ISO-8601 | null
-      completed_at: ISO-8601 | null
-      error: string | null
-    D5:
-      name: Dependencies & Tech Stack
-      status: pending | in_progress | complete | failed
-      output_file: dependencies.yml
-      started_at: ISO-8601 | null
-      completed_at: ISO-8601 | null
-      error: string | null
-    D6:
-      name: Technical Debt & Security
-      status: pending | in_progress | complete | failed
-      output_file: tech-debt.yml
-      started_at: ISO-8601 | null
-      completed_at: ISO-8601 | null
-      error: string | null
-    D7:
-      name: Data Flows & Integration
-      status: pending | in_progress | complete | failed
-      output_file: data-flows.yml
-      started_at: ISO-8601 | null
-      completed_at: ISO-8601 | null
-      error: string | null
-    D8:
-      name: Critical Paths & Risk
-      status: pending | in_progress | complete | failed
-      output_file: critical-paths.yml
-      started_at: ISO-8601 | null
-      completed_at: ISO-8601 | null
-      error: string | null
+    # D2-D8 follow identical structure with their respective name and output_file
 
   finalize:
-    validation:
-      status: pending | complete
-    checksums:
-      status: pending | complete
-    diagrams:
-      status: pending | complete
-    memory:
-      status: pending | complete
+    validation: {status: pending | complete}
+    checksums:  {status: pending | complete}
+    diagrams:   {status: pending | complete}
+    memory:     {status: pending | complete}
 ```
 
 ---
@@ -213,6 +160,100 @@ dimension_file_counts:
   D6: integer
   D7: integer
   D8: integer
+```
+
+---
+
+## Schema: `debt-strategy.yml`
+
+Produced by the `debt-strategy` workflow. Transforms D6 (Tech Debt) findings into a prioritized remediation plan with story drafts.
+
+```yaml
+summary: |
+  {overview: total items, distribution by category, top 3 urgent items}
+categories:
+  safety: [{item, source_file, source_line, impact, effort, priority_score}]
+  velocity: [{item, source_file, source_line, impact, effort, priority_score}]
+  reliability: [{item, source_file, source_line, impact, effort, priority_score}]
+  maintenance: [{item, source_file, source_line, impact, effort, priority_score}]
+remediation_tiers:
+  urgent:
+    - item: string
+      category: safety|velocity|reliability|maintenance
+      story_draft:
+        title: string
+        scope: string
+        acceptance_criteria: [string]
+  strategic:
+    - item: string
+      category: safety|velocity|reliability|maintenance
+      story_draft:
+        title: string
+        scope: string
+        acceptance_criteria: [string]
+  opportunistic:
+    - item: string
+      description: string
+      trigger: "when touching {files}"
+metrics:
+  total_items: integer
+  health_score_current: integer   # from tech-debt.yml
+  projected_score_after_urgent: integer
+```
+
+---
+
+## Schema: `dependency-audit.yml`
+
+Produced by the `dependency-audit` workflow. Transforms D5 (Dependencies) findings into a risk-ranked upgrade plan with story drafts.
+
+```yaml
+summary: |
+  {overview: total deps audited, critical count, outdated count, overlap count}
+risks:
+  critical:
+    - package: string
+      version: string
+      issue: string
+      cve: string | null
+      upgrade_to: string
+      breaking_changes: [string]
+      story_draft:
+        title: string
+        scope: string
+        acceptance_criteria: [string]
+  outdated:
+    - package: string
+      current_version: string
+      latest_version: string
+      versions_behind: integer
+      upgrade_difficulty: easy|moderate|hard
+  overlap:
+    - purpose: string
+      libraries: [string]
+      recommendation: string
+      story_draft:
+        title: string
+        scope: string
+        acceptance_criteria: [string]
+  license:
+    - package: string
+      license: string
+      issue: string
+      recommendation: string
+upgrade_plan:
+  - priority: 1|2|3
+    story_draft:
+      title: string
+      scope: string
+      packages: [string]
+      acceptance_criteria: [string]
+    estimated_effort: small|medium|large
+metrics:
+  total_dependencies: integer
+  healthy_percent: integer
+  critical_count: integer
+  outdated_count: integer
 ```
 
 ---

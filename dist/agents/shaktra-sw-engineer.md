@@ -45,6 +45,7 @@ Read the story YAML at `story_path`. Understand:
 - If brownfield (or analysis artifacts exist):
   - Read `.shaktra/analysis/structure.yml` for detected architectural patterns and layer boundaries
   - Read `.shaktra/analysis/practices.yml` for canonical code examples per practice area
+- Read `performance-practices.md` and `data-layer-practices.md` for performance and data access patterns relevant to the plan
 - Identify existing patterns in the codebase relevant to this story (Glob/Grep for similar modules)
 
 ### 3. Design Component Structure

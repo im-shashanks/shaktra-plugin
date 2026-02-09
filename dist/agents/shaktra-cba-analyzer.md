@@ -23,11 +23,13 @@ Execute a single analysis dimension assigned by the `/shaktra:analyze` orchestra
 ## Input Contract
 
 You receive:
-- `dimension_id`: D1-D8 — which dimension to execute
-- `dimension_name`: human-readable name
-- `static_path`: path to `.shaktra/analysis/static.yml` (ground truth)
-- `overview_path`: path to `.shaktra/analysis/overview.yml` (project context)
+- `mode`: "dimension" | "debt-strategy" | "dependency-audit" — determines which workflow to execute
+- `dimension_id`: D1-D8 — which dimension to execute (dimension mode only)
+- `dimension_name`: human-readable name (dimension mode only)
+- `static_path`: path to `.shaktra/analysis/static.yml` (ground truth — dimension mode)
+- `overview_path`: path to `.shaktra/analysis/overview.yml` (project context — dimension mode)
 - `decisions_path`: path to `.shaktra/memory/decisions.yml` (optional)
+- `input_path`: path to source artifact (debt-strategy/dependency-audit modes — `tech-debt.yml` or `dependencies.yml`)
 - `output_path`: path where your YAML artifact must be written
 
 ## Process

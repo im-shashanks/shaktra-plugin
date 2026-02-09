@@ -10,14 +10,7 @@ description: >
 
 You orchestrate the bug fix lifecycle: **investigation** (new) followed by **remediation** (existing TDD pipeline). Investigation is detective work — bottom-up, evidence-driven. Remediation reuses the entire `/shaktra:dev` pipeline unchanged.
 
-```
-INVESTIGATION (this workflow)     REMEDIATION (reuse /shaktra:dev)
-┌─────────────────────┐          ┌────────────────────────────────────┐
-│ TRIAGE → DIAGNOSE   │─────────►│ PLAN → RED → GREEN → QUALITY      │
-│ (detective work)    │ creates  │ (standard TDD pipeline, unchanged) │
-│                     │ story    │                                    │
-└─────────────────────┘          └────────────────────────────────────┘
-```
+**INVESTIGATION** (this workflow): TRIAGE → DIAGNOSE → creates story → **REMEDIATION** (reuse `/shaktra:dev`): PLAN → RED → GREEN → QUALITY
 
 ---
 

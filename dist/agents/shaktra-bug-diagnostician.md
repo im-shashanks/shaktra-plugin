@@ -49,7 +49,7 @@ triage:
   symptom_type: crash | wrong_result | performance | data_corruption | security
   reproducibility: always | intermittent | environment | data_specific
   severity: P0 | P1 | P2 | P3
-  story_tier: large | medium | small | trivial  # mapped from severity
+  story_tier: Large | Medium | Small | Trivial  # mapped from severity
   subsystem: "affected area of the codebase"
 ```
 

@@ -103,8 +103,8 @@ Check every file against these before considering any phase complete:
 
 ## Component Overview
 
-**5 Main Agent Skills:** `/shaktra:tpm`, `/shaktra:dev`, `/shaktra:review`, `/shaktra:analyze`, `/shaktra:general`
+**6 Main Agent Skills:** `/shaktra:tpm`, `/shaktra:dev`, `/shaktra:review`, `/shaktra:analyze`, `/shaktra:general`, `/shaktra:bugfix`
 **3 Utility Skills:** `/shaktra:init`, `/shaktra:doctor`, `/shaktra:workflow`
 **4 Internal Skills:** shaktra-quality, shaktra-tdd, shaktra-reference, shaktra-stories
-**11 Sub-Agents:** architect, tpm-quality, scrummaster, product-manager, sw-engineer, test-agent, developer, sw-quality, cba-analyzer, cr-analyzer, memory-curator
+**12 Sub-Agents:** architect, tpm-quality, scrummaster, product-manager, sw-engineer, test-agent, developer, sw-quality, cba-analyzer, cr-analyzer, memory-curator, bug-diagnostician
 **4 Hooks:** block-main-branch, check-p0, validate-story-scope, validate-schema

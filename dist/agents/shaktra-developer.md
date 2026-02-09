@@ -28,7 +28,7 @@ You receive:
 - `plan_path`: path to `implementation_plan.md`
 - `handoff_path`: path to `handoff.yml`
 - `settings_summary`: project language, test framework, coverage tool, thresholds
-- `mode`: "branch" (create feature branch) or "implement" (write code)
+- `mode`: "branch" (create feature branch), "implement" (write code), or "refactor" (apply refactoring transforms)
 
 ## Process — Branch Creation (mode: "branch")
 
@@ -48,6 +48,7 @@ You receive:
 - Read `handoff.yml` for `plan_summary` (patterns_applied, scope_risks, implementation_order)
 - Read test files to understand what must pass
 - Read `coding-practices.md` for implementation patterns
+- Based on story scope: read applicable practice files from shaktra-tdd — `security-practices.md` for auth/input handling, `performance-practices.md` and `data-layer-practices.md` for data access, `resilience-practices.md` for external calls, `concurrency-practices.md` for shared state
 - Read `.shaktra/memory/decisions.yml` — filter for `status: active` decisions relevant to this story's scope. These are binding project-wide rules (especially category "consistency" for established patterns).
 - If brownfield (or analysis artifacts exist):
   - Read `.shaktra/analysis/practices.yml` — find canonical examples matching the patterns in `plan_summary.patterns_applied`. When a canonical example exists, use it as the starting template for new code in that pattern.
@@ -63,6 +64,8 @@ Follow `plan_summary.implementation_order` exactly:
 - After each component: run the relevant tests to verify progress
 
 ### 3. Apply Coding Practices
+
+Read `architecture-governance-practices.md` — verify new files respect the declared architecture style from `settings.project.architecture`. Check layer placement and dependency direction.
 
 For every file written, verify against `coding-practices.md`:
 - Single responsibility per function/class

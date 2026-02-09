@@ -82,7 +82,8 @@ def main() -> None:
     try:
         data = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError):
-        sys.exit(0)
+        print("BLOCKED: Could not parse hook input — failing closed.")
+        sys.exit(2)
 
     file_path = data.get("tool_input", {}).get("file_path", "")
     if not isinstance(file_path, str):

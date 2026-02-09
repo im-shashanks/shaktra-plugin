@@ -53,6 +53,22 @@ Gate-specific checks loaded by sw-quality during code review. These checks detec
 - **Distinguishing from PG-01:** PG-06 is P0 when the input is demonstrably unbounded (API request body, query result without LIMIT). PG-01 is P1 for bounded-but-large inputs.
 - **Applies to:** Code gate
 
+### PG-07: String Concatenation in Loop
+
+- **Severity:** P2
+- **Detection:** String concatenation (`+` operator on strings) inside a loop body, in languages where strings are immutable (Python, Java, JavaScript, Go)
+- **Example (bad):** `result = ""; for item in items: result += str(item)`
+- **Example (good):** `result = "".join(str(item) for item in items)` or use StringBuilder
+- **Applies to:** Code gate
+
+### PG-08: Missing Connection Pool Configuration
+
+- **Severity:** P2
+- **Detection:** Connection pool created without idle timeout, max lifetime, or validation query configuration
+- **Example (bad):** `pool = create_pool(max_size=20)` — no idle timeout, no max lifetime
+- **Example (good):** `pool = create_pool(max_size=20, idle_timeout=300, max_lifetime=1800, validation_query="SELECT 1")`
+- **Applies to:** Code gate
+
 ---
 
 ## Data Layer Checks
@@ -93,4 +109,28 @@ Gate-specific checks loaded by sw-quality during code review. These checks detec
 - **Severity:** P1
 - **Detection:** Database write (INSERT/UPDATE/DELETE) to a table that has a corresponding cache key, without invalidating or updating the cache
 - **Note:** Requires mapping between DB tables and cache keys. If mapping is unclear, flag as observation.
+- **Applies to:** Code gate
+
+### DL-06: Hardcoded Batch Size
+
+- **Severity:** P2
+- **Detection:** Batch processing with hardcoded numeric literal for batch size (not configurable via settings or parameter)
+- **Example (bad):** `for i in range(0, len(items), 500): process(items[i:i+500])`
+- **Example (good):** `batch_size = config.get("batch_size", 500); for i in range(0, len(items), batch_size): ...`
+- **Applies to:** Code gate
+
+### DL-07: Connection Without Guaranteed Release
+
+- **Severity:** P1
+- **Detection:** Database connection acquired without context manager, try/finally, or middleware guaranteeing release on error paths
+- **Example (bad):** `conn = pool.acquire(); result = conn.execute(query); conn.release()`
+- **Example (good):** `with pool.acquire() as conn: result = conn.execute(query)`
+- **Applies to:** Code gate
+
+### DL-08: Raw SQL with String Interpolation
+
+- **Severity:** P0
+- **Detection:** SQL query string built with string interpolation (f-strings, `format()`, `%` operator, template literals, concatenation) instead of parameterized queries. Also covered by SE-01.
+- **Example (bad):** `db.execute(f"SELECT * FROM users WHERE name = '{name}'")`
+- **Example (good):** `db.execute("SELECT * FROM users WHERE name = ?", (name,))`
 - **Applies to:** Code gate

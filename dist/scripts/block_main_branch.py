@@ -56,7 +56,8 @@ def main() -> None:
     try:
         data = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError):
-        sys.exit(0)
+        print("BLOCKED: Could not parse hook input — failing closed.")
+        sys.exit(2)
 
     command = data.get("tool_input", {}).get("command", "")
     if not isinstance(command, str) or not command.strip():

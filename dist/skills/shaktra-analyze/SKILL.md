@@ -28,6 +28,8 @@ Analysis without ground truth is guessing. Stage 1 produces factual data via too
 | `full-analysis` | "analyze", "analyze codebase", no dimension specified | Full 2-Stage Analysis |
 | `targeted-analysis` | "analyze architecture", "analyze practices", specific dimension named | Targeted Dimensions |
 | `refresh` | "refresh analysis", "update analysis", "re-analyze" | Incremental Refresh |
+| `debt-strategy` | "debt strategy", "prioritize tech debt", "debt remediation" | Debt Strategy |
+| `dependency-audit` | "dependency audit", "dependency health", "upgrade dependencies" | Dependency Audit |
 | `status` | "analysis status", "what's analyzed" | Report Manifest State |
 
 ---
@@ -224,6 +226,30 @@ When user says "refresh" or "update analysis":
 5. Ask user: "Re-analyze stale dimensions? (D1, D4, D7)"
 6. Re-run only confirmed dimensions
 7. Update checksums and manifest
+
+---
+
+## Debt Strategy
+
+When user requests debt prioritization or remediation planning:
+
+1. Verify `.shaktra/analysis/tech-debt.yml` exists — if not, run D6 (Technical Debt & Security) dimension first
+2. Spawn CBA Analyzer in `debt-strategy` mode — reads `debt-strategy.md` for categorization, scoring, and story generation rules
+3. CBA Analyzer writes output to `.shaktra/analysis/debt-strategy.yml`
+4. Present summary: category distribution, top urgent items, projected health score improvement
+5. Inform user: "Feed generated stories into `/shaktra:tpm` for sprint planning"
+
+---
+
+## Dependency Audit
+
+When user requests dependency audit or upgrade planning:
+
+1. Verify `.shaktra/analysis/dependencies.yml` exists — if not, run D5 (Dependencies & Tech Stack) dimension first
+2. Spawn CBA Analyzer in `dependency-audit` mode — reads `dependency-audit.md` for risk categorization, upgrade assessment, and story generation rules
+3. CBA Analyzer writes output to `.shaktra/analysis/dependency-audit.yml`
+4. Present summary: risk distribution, critical items requiring immediate action, upgrade plan priorities
+5. Inform user: "Feed generated stories into `/shaktra:tpm` for sprint planning"
 
 ---
 

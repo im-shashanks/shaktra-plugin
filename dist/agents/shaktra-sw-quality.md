@@ -55,34 +55,23 @@ Output: Qualitative findings — severity, issue, guidance. No check IDs.
 
 Process:
 1. Read `quick-check.md` — load all 36 checks
-2. Read `performance-data-checks.md` — load performance and data layer checks (PG-01 through PG-06, DL-01 through DL-05)
+2. Read `performance-data-checks.md` — load performance and data layer checks (PG-01 through PG-08, DL-01 through DL-08)
 3. Read `security-checks.md` — load security checks (SE-01 through SE-12, ST-01 through ST-03)
-4. Apply the gate-specific subset:
+4. Read `architecture-checks.md` — load architecture checks (ARC-01 through ARC-06). Read `settings.project.architecture` to determine which ARC checks are conditional vs always-on.
+5. Apply the gate-specific subset:
    - **Plan gate:** PL-01 through PL-05
    - **Test gate:** TQ-01 through TQ-13, ST-01 through ST-03
-   - **Code gate:** CQ-01 through CQ-18, PG-01 through PG-06, DL-01 through DL-05, SE-01 through SE-12
-5. For each check, examine the artifacts and record findings
-6. If `prior_findings` provided: verify each prior finding was addressed
-7. Read `settings.quality.p1_threshold` for gate logic
+   - **Code gate:** CQ-01 through CQ-18, PG-01 through PG-08, DL-01 through DL-08, SE-01 through SE-12, ARC-01 through ARC-06
+6. For each check, examine the artifacts and record findings
+7. If `prior_findings` provided: verify each prior finding was addressed
+8. Read `settings.quality.p1_threshold` for gate logic
 
 **Check depth enforcement** (from `story-tiers.md`):
 - Quick tier (Trivial/Small): P2+ findings are observations, not blockers
 - Full tier (Medium): standard severity enforcement
 - Thorough tier (Large): standard enforcement (expanded review in COMPREHENSIVE)
 
-Gate logic:
-```
-p0_count = count findings where severity == P0
-p1_count = count findings where severity == P1
-p1_max   = read settings.quality.p1_threshold
-
-if p0_count > 0:
-    emit CHECK_BLOCKED
-else if p1_count > p1_max:
-    emit CHECK_BLOCKED
-else:
-    emit CHECK_PASSED
-```
+Gate logic: Apply the merge gate from `severity-taxonomy.md` — P0 always blocks, P1 blocks if count exceeds `settings.quality.p1_threshold`. Emit `CHECK_BLOCKED` or `CHECK_PASSED`.
 
 ### REFACTOR_VERIFY
 

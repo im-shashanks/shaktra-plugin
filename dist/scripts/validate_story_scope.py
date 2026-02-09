@@ -76,7 +76,8 @@ def main() -> None:
     try:
         data = json.load(sys.stdin)
     except (json.JSONDecodeError, EOFError):
-        sys.exit(0)
+        print("BLOCKED: Could not parse hook input — failing closed.")
+        sys.exit(2)
 
     file_path = data.get("tool_input", {}).get("file_path", "")
     if not isinstance(file_path, str) or not file_path.strip():
@@ -100,8 +101,13 @@ def main() -> None:
     try:
         with open(story_path) as f:
             story = yaml.safe_load(f)
-    except Exception:
-        sys.exit(0)
+    except Exception as e:
+        print(
+            f"BLOCKED: Could not read story file '{story_path}'.\n"
+            f"  {e}\n"
+            f"  Cannot verify file scope — failing closed."
+        )
+        sys.exit(2)
 
     if not isinstance(story, dict):
         sys.exit(0)

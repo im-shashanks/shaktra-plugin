@@ -1,6 +1,6 @@
 # Guard Tokens
 
-15 core workflow tokens used for signaling across Shaktra agents. Tokens are emitted as plain text markers in agent output. Domain-specific skills define additional tokens (review: 4, analyze: 3, general: 3) in their respective SKILL.md files.
+14 core workflow tokens used for signaling across Shaktra agents. Tokens are emitted as plain text markers in agent output. Domain-specific skills define additional tokens (review: 4, analyze: 3, general: 3, bugfix: 3, refactoring: 2) in their respective SKILL.md files.
 
 ## Phase Progression
 
@@ -19,14 +19,13 @@
 | `CHECK_BLOCKED` | A quality check failed during the TDD fix loop | SW Quality | Return to fix loop — address the finding |
 | `QUALITY_PASS` | Quality gate passed (0 P0, P1 within threshold) | SW Quality, TPM Quality | Proceed to next phase or allow merge |
 | `QUALITY_BLOCKED` | Quality gate failed (P0 exists or P1 exceeds threshold) | SW Quality, TPM Quality | Block — resolve findings first |
+| `REFACTOR_PASS` | Refactoring verification passed — behavior preserved, metrics improved | SW Quality | Proceed to completion |
+| `REFACTOR_BLOCKED` | Refactoring verification failed — tests broken, coverage decreased, or P0/P1 found | SW Quality | Return to fix loop — address regressions |
 
 ## Workflow
 
 | Token | When Emitted | Emitter | What Happens Next |
 |---|---|---|---|
-| `STORY_COMPLETE` | All acceptance criteria met, all gates passed | SW Quality | Mark story done, update sprint state |
-| `STORY_FAILED` | Story cannot be completed (blocker, scope issue, infeasible) | Developer | Escalate to TPM for re-planning |
-| `WORKFLOW_STEP_SKIPPED` | A workflow step was intentionally skipped (e.g., tier allows it) | Any Agent | Log reason and continue to next step |
 | `MAX_LOOPS_REACHED` | A fix/retry loop hit its iteration cap without resolution | Any Agent | Stop loop, escalate to user with findings |
 
 ## Communication

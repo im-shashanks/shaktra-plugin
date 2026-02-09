@@ -103,10 +103,10 @@ Compare this story's decisions and patterns against existing `decisions.yml`:
 
 For Large tier stories, add these additional review dimensions after the standard 14:
 
-**Architecture Impact Analysis:**
-- Does this change affect the system's architectural boundaries?
-- Are new dependencies introduced? Are they justified?
-- Does the change maintain the existing layering and separation of concerns?
+**Architecture Governance:**
+- Apply ARC-01 through ARC-06 from `architecture-checks.md`
+- For Large tier: additionally verify new modules don't fragment existing bounded contexts
+- Cross-reference with `.shaktra/analysis/structure.yml` if analysis exists
 
 **Performance Profiling Review:**
 - Are there O(n^2) or worse algorithms on user-controlled input?

@@ -70,8 +70,9 @@ Max fix loops: 3 per gate. After 3 failed attempts, emit `MAX_LOOPS_REACHED` and
 |---|---|
 | `quick-check.md` | 36 checks with IDs, severities, gates, detection guidance, and examples |
 | `comprehensive-review.md` | Full 14-dimension review process with plan adherence and decision consolidation |
-| `performance-data-checks.md` | Performance and data layer checks (PG-01 through PG-06, DL-01 through DL-05) |
+| `performance-data-checks.md` | Performance and data layer checks (PG-01 through PG-08, DL-01 through DL-08) |
 | `security-checks.md` | Security checks aligned with OWASP Top 10 (SE-01 through SE-12, ST-01 through ST-03) |
+| `architecture-checks.md` | Architecture governance checks enforcing `settings.project.architecture` (ARC-01 through ARC-06) |
 
 ## References
 

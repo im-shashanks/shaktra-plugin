@@ -38,6 +38,7 @@ This skill never restates severity definitions, quality dimensions, or schema st
 | `data-layer-practices.md` | Query optimization, transaction management, batch processing, cache invalidation, data access patterns — 8 AI-enforceable checks (DL-01 through DL-08) |
 | `threat-modeling-practices.md` | STRIDE framework, trust boundaries, data classification, threat model deliverable — 5 AI-enforceable checks (TM-01 through TM-05) |
 | `security-practices.md` | OWASP Top 10 aligned — injection, auth, access control, crypto, SSRF, logging — 12 AI-enforceable checks (SE-01 through SE-12) |
+| `architecture-governance-practices.md` | Layer dependency rules, module boundaries, dependency direction enforcement per `settings.project.architecture` |
 
 ## How Agents Use This Skill
 

@@ -48,20 +48,20 @@ sprints:
 | Setting | Read By |
 |---|---|
 | `project.*` | init skill (writes), all agents (context) |
-| `project.architecture` | architect (validates alignment), sw-engineer (pattern selection), developer (code structure) |
-| `tdd.coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
-| `tdd.hotfix_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
-| `tdd.small_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
-| `tdd.large_coverage_threshold` | sw-quality, test-agent, story-tiers gate matrix |
+| `project.architecture` | architect (validates alignment), sw-engineer (pattern selection), developer (code structure), sw-quality (ARC checks — conditional enforcement) |
+| `tdd.coverage_threshold` | developer, story-tiers gate matrix |
+| `tdd.hotfix_coverage_threshold` | developer, story-tiers gate matrix |
+| `tdd.small_coverage_threshold` | developer, story-tiers gate matrix |
+| `tdd.large_coverage_threshold` | developer, story-tiers gate matrix |
 | `quality.p1_threshold` | sw-quality, code-reviewer, severity-taxonomy merge gate |
 | `review.verification_test_persistence` | code-reviewer |
 | `review.min_verification_tests` | code-reviewer |
-| `analysis.summary_token_budget` | cba-analyzer, analyze skill (validation) |
+| `analysis.summary_token_budget` | cba-analyzer (via analysis-output-schemas.md budgets), analyze skill (validation) |
 | `analysis.incremental_refresh` | analyze skill (refresh workflow) |
-| `refactoring.safety_threshold` | sw-quality (REFACTOR_VERIFY), test-agent (characterization mode) |
-| `refactoring.structural_safety_threshold` | sw-quality (REFACTOR_VERIFY), test-agent (characterization mode) |
+| `refactoring.safety_threshold` | refactoring-pipeline (orchestrator), test-agent (characterization mode) |
+| `refactoring.structural_safety_threshold` | refactoring-pipeline (orchestrator), test-agent (characterization mode) |
 | `refactoring.max_characterization_tests` | test-agent (characterization mode) |
-| `sprints.enabled` | scrummaster, tpm-quality |
+| `sprints.enabled` | scrummaster, tdd-pipeline (orchestrator), workflow-template (orchestrator) |
 | `sprints.velocity_tracking` | scrummaster |
 | `sprints.sprint_duration_weeks` | scrummaster |
 | `sprints.default_velocity` | scrummaster (fallback when no velocity history) |
