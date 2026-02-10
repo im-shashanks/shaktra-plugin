@@ -32,7 +32,7 @@ Quality enforcement is built into the workflow, not bolted on. Every code change
 
 ## How It Works
 
-![Shaktra Architecture](https://raw.githubusercontent.com/im-shashanks/shaktra-plugin/main/Resources/workflow.drawio.png)
+![Shaktra Architecture](Resources/workflow.drawio.png)
 
 Shaktra uses a layered agent system where **skills orchestrate** and **agents execute**:
 

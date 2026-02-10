@@ -46,6 +46,10 @@ cp -r dist/scripts "$BUILD/"
 cp -r dist/templates "$BUILD/"
 cp dist/LICENSE "$BUILD/"
 
+# Copy workflow diagram for README
+mkdir -p "$BUILD/Resources"
+cp Resources/workflow.drawio.png "$BUILD/Resources/"
+
 # Remove __pycache__ if copied
 find "$BUILD" -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 
@@ -141,7 +145,7 @@ if [ ! -f "$BUILD/hooks/hooks.json" ]; then
   errors=$((errors + 1))
 fi
 
-for devfile in CLAUDE.md docs Resources .claude .local .venv; do
+for devfile in CLAUDE.md docs .claude .local .venv; do
   if [ -e "$BUILD/$devfile" ]; then
     echo "  FAIL: dev-only '$devfile' found in release build"
     errors=$((errors + 1))
