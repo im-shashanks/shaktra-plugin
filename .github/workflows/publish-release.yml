@@ -47,14 +47,14 @@ jobs:
           mkdir -p "$BUILD/.claude-plugin"
           cp dist/.claude-plugin/plugin.json "$BUILD/.claude-plugin/"
 
-          # Transform marketplace.json: source "./dist" -> "."
+          # Transform marketplace.json: source "./dist" -> "./"
           python3 -c "
           import json, pathlib
           p = pathlib.Path('.claude-plugin/marketplace.json')
           data = json.loads(p.read_text())
           for plugin in data.get('plugins', []):
               if plugin.get('source') == './dist':
-                  plugin['source'] = '.'
+                  plugin['source'] = './'
           (pathlib.Path('$BUILD') / '.claude-plugin' / 'marketplace.json').write_text(
               json.dumps(data, indent=2) + '\n')
           "
@@ -104,14 +104,14 @@ jobs:
             errors=$((errors + 1))
           fi
 
-          # marketplace.json source is "."
+          # marketplace.json source is "./"
           source_val=$(python3 -c "
           import json
           data = json.load(open('$BUILD/.claude-plugin/marketplace.json'))
           print(data['plugins'][0]['source'])
           ")
-          if [ "$source_val" != "." ]; then
-            echo "FAIL: marketplace.json source is '$source_val', expected '.'"
+          if [ "$source_val" != "./" ]; then
+            echo "FAIL: marketplace.json source is '$source_val', expected './'"
             errors=$((errors + 1))
           fi
 
