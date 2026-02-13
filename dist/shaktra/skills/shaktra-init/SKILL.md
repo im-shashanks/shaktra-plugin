@@ -116,14 +116,14 @@ This template is a skeleton for documenting the **specific project** (architectu
 
 **Note:** The Shaktra framework documentation is stored in `.shaktra/CLAUDE.md` (separate file).
 
-The template also mentions that users can run `/shaktra:init CLAUDE.md` to have Claude fill in the sections with project-specific details.
+The template also mentions that users can run `/init CLAUDE.md` to have Claude fill in the sections with project-specific details.
 
 **If no CLAUDE.md exists** in the project root:
 - Create `CLAUDE.md` with the template content.
 
 **If CLAUDE.md already exists** in the project root:
 - Do NOT overwrite the existing file.
-- Report to user: "CLAUDE.md already exists. Shaktra initialization complete. You can update CLAUDE.md with your project-specific information, or run `/shaktra:init CLAUDE.md` to have Claude fill it in."
+- Report to user: "CLAUDE.md already exists. Shaktra initialization complete. You can update CLAUDE.md with your project-specific information, or run `/init CLAUDE.md` to have Claude fill it in."
 
 ### Step 6: Report Results
 
@@ -152,7 +152,7 @@ Created:
   CLAUDE.md (created | already exists)
 
 Next steps:
-  1. Update CLAUDE.md with your project-specific information (or run `/shaktra:init CLAUDE.md` for Claude to do it)
+  1. Update CLAUDE.md with your project-specific information (or run `/init CLAUDE.md` for Claude to do it)
   2. For Shaktra framework reference: see .shaktra/CLAUDE.md
   3. Review .shaktra/settings.yml and adjust thresholds if needed
   4. For brownfield projects: run /shaktra:analyze to understand the existing codebase

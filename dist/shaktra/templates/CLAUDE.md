@@ -2,7 +2,7 @@
 
 **Guidance:** This file documents your specific project — architecture decisions, conventions, development workflow, and team context. For Shaktra framework documentation, see `.shaktra/CLAUDE.md`.
 
-**Getting started:** Run `/shaktra:init CLAUDE.md` to have Claude fill in these sections with your project details.
+**Getting started:** Run `/init CLAUDE.md` to have Claude fill in these sections with your project details.
 
 ---
 
