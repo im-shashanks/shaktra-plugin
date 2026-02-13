@@ -80,7 +80,7 @@ Read template files from `${CLAUDE_PLUGIN_ROOT}/templates/` and write them into 
 | `templates/lessons.yml` | `.shaktra/memory/lessons.yml` | Copy as-is |
 | `templates/sprints.yml` | `.shaktra/sprints.yml` | Copy as-is |
 | `templates/analysis-manifest.yml` | `.shaktra/analysis/manifest.yml` | Copy as-is |
-| `templates/shaktra-CLAUDE.md` | `.shaktra/CLAUDE.md` | Copy as-is (Shaktra framework reference) |
+| `templates/shaktra-CLAUDE.md` | `.shaktra/CLAUDE.md` | Copy as-is (project state documentation) |
 
 For `settings.yml`, populate the `project:` section with the gathered values:
 
@@ -114,7 +114,7 @@ This template is a skeleton for documenting the **specific project** (architectu
 - Decision log (referencing `.shaktra/memory/decisions.yml`)
 - Contributing guidelines
 
-**Note:** The Shaktra framework documentation is stored in `.shaktra/CLAUDE.md` (separate file).
+**Note:** A separate `.shaktra/CLAUDE.md` file is also created to document the project's development state structure (what `.shaktra/` directory contains and how Shaktra uses it). This is not about the Shaktra framework itself, but about the project's state management.
 
 The template also mentions that users can run `/init CLAUDE.md` to have Claude fill in the sections with project-specific details.
 
@@ -139,7 +139,7 @@ Coverage Tool: <coverage_tool>
 Package Manager: <package_manager>
 
 Created:
-  .shaktra/CLAUDE.md                    # Shaktra framework reference
+  .shaktra/CLAUDE.md                    # Project state documentation (.shaktra/ structure and contents)
   .shaktra/settings.yml
   .shaktra/sprints.yml
   .shaktra/memory/decisions.yml
@@ -153,8 +153,8 @@ Created:
 
 Next steps:
   1. Update CLAUDE.md with your project-specific information (or run `/init CLAUDE.md` for Claude to do it)
-  2. For Shaktra framework reference: see .shaktra/CLAUDE.md
-  3. Review .shaktra/settings.yml and adjust thresholds if needed
-  4. For brownfield projects: run /shaktra:analyze to understand the existing codebase
-  5. Run /shaktra:tpm to create design docs and stories
+  2. Review .shaktra/settings.yml and adjust thresholds if needed
+  3. For brownfield projects: run /shaktra:analyze to understand the existing codebase
+  4. Run /shaktra:tpm to create design docs and stories
+  5. For Shaktra framework reference: see plugin README.md or run /shaktra:help
 ```
