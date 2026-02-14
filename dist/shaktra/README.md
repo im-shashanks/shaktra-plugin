@@ -7,7 +7,7 @@
 | **Version** | 0.1.2 |
 | **License** | MIT |
 | **Claude Code** | February 2025+ |
-| **Platform** | macOS, Linux, Windows |
+| **Platform** | Claude code native (macOS, Linux, Windows) |
 
 ---
 
@@ -45,7 +45,7 @@ Hotfix (XS): 70% coverage, ships fast. Feature (L): 95% coverage, full architect
 
 ---
 
-## See It In Action
+## See It In Action (example)
 
 Three commands take you from idea to production-ready code:
 
