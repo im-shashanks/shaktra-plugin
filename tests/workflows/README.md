@@ -2,6 +2,8 @@
 
 End-to-end tests that verify `/shaktra:*` skills execute correctly in a real Claude Code session. Each test launches a fresh `claude --print` session with the plugin loaded, invokes a skill, and validates the resulting `.shaktra/` state.
 
+**Every test is standalone** — own temp directory, own fixtures, no shared state between tests.
+
 ## Testing Philosophy
 
 Shaktra has two testing layers:
@@ -19,6 +21,7 @@ L5 tests verify what static checks cannot:
 - Quality gate execution (review → findings → fix loop)
 - State transitions (handoff phases, sprint allocation, memory capture)
 - File creation patterns (design docs, stories, sprints — correct format and content)
+- **Error path handling** — negative tests verify pre-flight checks catch invalid state
 
 ### Test Scoping via CLAUDE.md Overrides
 
@@ -27,9 +30,137 @@ Tests need to prove workflows work, not produce production-quality output. To ke
 - **Quality loops: 1 iteration** (production default is 3) — proves the loop runs without exhausting time
 - **Story creation: 2 stories max** — proves the scrummaster creates valid stories without generating 10+
 - **Sprint planning: 1 sprint** — proves allocation works
-- **No clarification prompts** — agents make reasonable assumptions instead of blocking on user input
+- **AskUserQuestion auto-answer** — agents select the first option instead of prompting for input
+- **Mandatory logging** — all agents log events to `.shaktra-test.log` for real-time observability
 
 These overrides live in `test_definitions.py` (`_TEST_OVERRIDES`) and are appended to the test directory's `CLAUDE.md` during setup. **No plugin files are modified.**
+
+## Real Test Runs
+
+Here's what actual test execution looks like — these are real logs from the automated test framework.
+
+### Bugfix Workflow (9/10 validator checks passed)
+
+The bugfix test starts with a calculator module containing a zero-division bug and validates the full diagnosis-to-fix pipeline:
+
+```
+[14:23:44] Starting test bugfix
+[14:23:52] [bugfix-orchestrator] started — investigating divide function ZeroDivisionError bug
+[14:24:14] PHASE: INVESTIGATION started
+[14:24:40] [bug-diagnostician] started — investigating divide ZeroDivisionError
+[14:24:51] PHASE: reproduce started
+[14:25:02] PHASE: reproduce complete — bug confirmed: ZeroDivisionError raised instead of ValueError
+[14:25:06] PHASE: hypothesize started
+[14:25:29] PHASE: gather-evidence complete — RC-LOGIC-1 confirmed, RC-DATA-1 eliminated
+[14:26:14] WRITE: .shaktra/diagnosis/BUG-001-diagnosis.yml
+[14:26:14] WRITE: .shaktra/stories/BUG-001.yml
+[14:26:37] DIAGNOSIS_COMPLETE — root cause: RC-LOGIC, location: src/calculator.py:2
+[14:26:45] PHASE: REMEDIATION started — routing to TDD pipeline for BUG-001
+[14:27:14] [sdm-orchestrator] started — TDD pipeline for BUG-001 (tier: small)
+[14:28:55] PHASE: PLAN complete
+[14:29:07] PHASE: RED started
+[14:30:37] PHASE: tests complete — 3 FAILED (valid: ZeroDivisionError instead of ValueError), 6 PASSED
+[14:31:12] PHASE: RED complete — 2 failing tests (valid RED), 7 passing
+[14:32:29] QUALITY: verdict=BLOCKED findings=2 (1 P0, 1 P2)
+[14:32:56] QUALITY-FIX: fixing 1 finding in tests/test_calculator.py
+[14:33:50] PHASE: GREEN started
+[14:34:09] [developer] started — implementing fix for BUG-001
+[14:35:20] PHASE: code complete
+[14:35:33] PHASE: GREEN complete — all 10 tests pass, 100% coverage
+[14:36:39] QUALITY: verdict=PASS findings=0
+```
+
+**Result:** Bug diagnosed (root cause identified, hypotheses tested), TDD fix implemented (10 tests, 100% coverage), quality review passed. Total: ~13 minutes.
+
+**Validator output:**
+```
+[PASS] calculator.py exists
+[PASS] fix addresses zero division
+[PASS] test file exists
+[PASS] tests pass after fix
+[PASS] bugfix story or artifact created
+[PASS] diagnosis artifact exists
+[PASS] bugfix story created
+[PASS] root cause identified
+[PASS] lessons.yml valid YAML
+```
+
+### Dev Workflow (18/19 validator checks passed)
+
+The dev test starts with a pre-built story (ST-TEST-001: user registration) and validates the full TDD pipeline:
+
+```
+[14:45:15] Starting test dev
+[14:45:23] [SDM] started — develop story ST-TEST-001
+[14:45:55] PHASE: pre-flight complete — all 3 checks passed
+[14:46:10] PHASE: plan started
+[14:48:20] PHASE: plan complete
+[14:49:18] QUALITY: verdict=BLOCKED findings=5
+[14:50:21] QUALITY-FIX: fixing 5 findings in implementation_plan.md
+[14:52:44] PHASE: branch started
+[14:52:59] [developer] complete — branch feat/ST-TEST-001-user-registration created
+[14:53:14] PHASE: red started
+[14:53:38] [test-agent] started — writing failing tests
+[14:56:13] WRITE: tests/test_email_validator.py
+[14:56:13] WRITE: tests/test_password_utils.py
+[14:56:13] WRITE: tests/test_user_repository.py
+[14:56:13] WRITE: tests/test_user_service.py
+[14:56:13] WRITE: tests/test_user_routes.py
+[14:57:32] [test-agent] complete
+[14:58:01] PHASE: red complete
+[14:59:37] QUALITY: verdict=CHECK_PASSED findings=1
+[15:00:18] PHASE: green started
+[15:00:50] [developer] started — implementing code
+[15:03:10] WRITE: src/models/user.py
+[15:03:10] WRITE: src/exceptions.py
+[15:03:10] WRITE: src/utils/password_utils.py
+[15:03:10] WRITE: src/utils/email_validator.py
+[15:03:10] WRITE: src/repositories/user_repository.py
+[15:03:10] WRITE: src/services/user_service.py
+[15:03:10] WRITE: src/api/user_routes.py
+[15:03:39] [developer] complete
+```
+
+**Result:** Full layered architecture implemented (7 components, 5 test files), 29 tests written, 98% coverage, quality gates enforced at every phase. The plan quality review found 5 issues and fixed them before proceeding. Total: ~19 minutes.
+
+**Validator output:**
+```
+[PASS] handoff.yml exists
+[PASS] handoff.yml valid YAML
+[PASS] field 'story_id' == 'ST-TEST-001'
+[PASS] current_phase is valid
+[PASS] current_phase beyond pending
+[PASS] completed_phases non-empty
+[PASS] completed_phases in correct order
+[PASS] plan_summary populated
+[PASS] plan_summary has components
+[PASS] plan_summary has test_plan
+[PASS] implementation_plan.md created
+[PASS] test_summary exists
+[PASS] at least 1 test created
+[PASS] test_files listed
+[PASS] code_summary exists
+[PASS] all tests green
+[PASS] coverage recorded
+[PASS] code files listed
+[PASS] on feature branch
+```
+
+### File System Monitor
+
+The external FileMonitor tracks every file creation and modification in real time, providing independent observability into the agent's work:
+
+```
+[MONITOR] +160s new: .shaktra/stories/ST-TEST-001/implementation_plan.md (10.4KB)
+[MONITOR] +400s modified: implementation_plan.md (10.4KB → 14.8KB, +4.4KB)   ← quality fix
+[MONITOR] +590s new: tests/__init__.py (0B)
+[MONITOR] +610s new: tests/test_email_validator.py (2.6KB)
+[MONITOR] +641s new: tests/test_user_service.py (4.9KB)
+[MONITOR] +981s new: src/models/user.py (530B)
+[MONITOR] +1031s new: src/services/user_service.py (2.7KB)
+[MONITOR] +1071s modified: .pytest_cache/v/cache/lastfailed (432B → 2B, -430B)  ← all tests pass
+[MONITOR] +1081s new: .coverage (52.0KB)
+```
 
 ## Prerequisites
 
@@ -53,6 +184,9 @@ python3 tests/workflows/run_workflow_tests.py --test tpm
 
 # Run a test group
 python3 tests/workflows/run_workflow_tests.py --group greenfield
+
+# Run negative tests only (error paths)
+python3 tests/workflows/run_workflow_tests.py --negative
 
 # Run all tests
 python3 tests/workflows/run_workflow_tests.py
@@ -96,70 +230,86 @@ Together, these give you full visibility into what's happening — which agents 
 
 ## Available Tests
 
-| Test | Group | What It Tests | Timeout | Est. Time |
-|------|-------|---------------|---------|-----------|
-| `help` | smoke | Skill loads, outputs help text | 2 min | ~30s |
-| `doctor` | smoke | Health check runs without error | 3 min | ~1 min |
-| `status-dash` | smoke | Dashboard renders without error | 3 min | ~1 min |
-| `init-greenfield` | greenfield | `.shaktra/` structure, settings, templates | 5 min | ~2 min |
-| `pm` | greenfield | PRD creation, personas, journey maps | 15 min | ~10 min |
-| `tpm` | greenfield | Design doc → quality review → stories → sprints → memory | 25 min | ~20 min |
-| `dev` | greenfield | TDD pipeline: plan → tests → code → quality gates | 20 min | ~15 min |
-| `review` | greenfield | Code review findings, verdict, memory capture | 15 min | ~10 min |
-| `tpm-hotfix` | hotfix | Trivial-tier story creation, no sprint allocation | 10 min | ~5 min |
-| `init-brownfield` | brownfield | `.shaktra/` for existing project | 5 min | ~2 min |
-| `analyze` | brownfield | 9-dimension codebase analysis | 15 min | ~10 min |
-| `bugfix` | bugfix | Bug diagnosis and TDD fix | 15 min | ~10 min |
+### Positive Tests (14)
 
-### Test Groups
+| Test | Category | What It Tests | Timeout | Turns |
+|------|----------|---------------|---------|-------|
+| `help` | smoke | Skill loads, outputs help text | 2m | 5 |
+| `doctor` | smoke | Health check runs without error | 3m | 15 |
+| `status-dash` | smoke | Dashboard renders without error | 3m | 15 |
+| `general` | smoke | General question answering | 3m | 10 |
+| `workflow` | smoke | Workflow routing suggestion | 3m | 10 |
+| `init-greenfield` | greenfield | `.shaktra/` structure, settings, templates | 5m | 15 |
+| `pm` | greenfield | PRD creation, personas, journey maps | 15m | 30 |
+| `tpm` | greenfield | Design doc, quality review, stories, sprints, memory | 25m | 60 |
+| `dev` | greenfield | TDD pipeline: plan, branch, tests, code, quality | 20m | 65 |
+| `review` | greenfield | Code review findings, verdict, memory capture | 15m | 35 |
+| `tpm-hotfix` | hotfix | Trivial-tier story creation, no sprint allocation | 10m | 30 |
+| `init-brownfield` | brownfield | `.shaktra/` for existing project | 5m | 15 |
+| `analyze` | brownfield | 9-dimension codebase analysis | 15m | 40 |
+| `bugfix` | bugfix | Bug diagnosis, TDD fix, quality review | 15m | 55 |
 
-Tests within `greenfield` and `brownfield` groups share a temp directory and run sequentially — each step builds on the previous one's state:
+### Negative Tests (5)
 
-```
-greenfield:  init-greenfield → pm → tpm → dev → review
-brownfield:  init-brownfield → analyze
-```
+Negative tests verify error paths — they should detect problems at pre-flight and stop quickly.
 
-The `hotfix` and `bugfix` groups run in isolated directories.
+| Test | Category | What It Tests | Timeout | Turns |
+|------|----------|---------------|---------|-------|
+| `dev-no-settings` | negative | Dev rejects missing settings.yml | 2m | 10 |
+| `dev-blocked-story` | negative | Dev rejects story blocked by dependency | 2m | 10 |
+| `dev-sparse-story` | negative | Dev rejects story missing required fields | 2m | 10 |
+| `review-incomplete-dev` | negative | Review detects incomplete development | 2m | 10 |
+| `init-already-exists` | negative | Init detects `.shaktra/` already exists | 2m | 5 |
+
+### Test Independence
+
+Every test gets its own fresh temp directory with isolated fixtures. Tests can be run in any order, individually or in groups. There are no dependencies between tests.
+
+Each test's setup function prepares the exact `.shaktra/` state it needs:
+- **Smoke tests:** greenfield `.shaktra/` with settings
+- **Dev test:** pre-built story + design doc (no prior TPM run needed)
+- **Review test:** completed dev handoff + actual code files (no prior dev run needed)
+- **Negative tests:** deliberately broken state (missing settings, blocked stories, etc.)
 
 ### Time and Cost Expectations
 
 | Scope | Est. Time | Est. Cost |
 |-------|-----------|-----------|
 | Smoke tests (`--smoke`) | 2-3 min | ~$0.10 |
+| Negative tests (`--negative`) | 5-10 min | ~$0.50 |
 | Single workflow (`--test tpm`) | 15-25 min | ~$2-5 |
-| Full suite (all tests) | 60-90 min | ~$10-20 |
+| Full suite (all 19 tests) | 60-90 min | ~$10-20 |
 
 Costs depend on model choice. Using `--model claude-sonnet-4-5-20250929` is recommended for testing (good balance of speed and capability). Opus is more capable but slower and more expensive.
 
 ## How It Works
 
 ```
-python3 run_workflow_tests.py --test tpm
+python3 run_workflow_tests.py --test dev
   │
   ├─ 1. SETUP
-  │   ├─ Create temp directory with git init
+  │   ├─ Create fresh temp directory with git init
   │   ├─ Copy .shaktra/ from plugin templates (settings, sprints, memory)
-  │   ├─ Copy test fixtures (PRD, architecture docs)
-  │   └─ Append testing overrides to CLAUDE.md (story limits, quality loop limits, logging)
+  │   ├─ Copy test fixtures (story YAML, design doc, code files as needed)
+  │   └─ Append testing overrides to CLAUDE.md (quality limits, logging, auto-answer)
   │
   ├─ 2. LAUNCH
   │   ├─ Start FileMonitor thread (watches for new/modified files every 10s)
   │   └─ Start: claude --print --dangerously-skip-permissions \
-  │                   --plugin-dir dist/shaktra/ --max-turns 60 \
+  │                   --plugin-dir dist/shaktra/ --max-turns 65 \
   │                   -- "<test prompt>"
   │
   ├─ 3. EXECUTE (inside the claude session)
-  │   ├─ Agent logs "Starting test tpm" to .shaktra-test.log
-  │   ├─ Agent invokes: Skill("shaktra-tpm", args="...")
+  │   ├─ Agent logs "Starting test dev" to .shaktra-test.log
+  │   ├─ Agent invokes: Skill("shaktra-dev", args="develop story ST-TEST-001")
   │   │   └─ Skill runs the full workflow (sub-agents, quality gates, etc.)
   │   │      All agents log events to .shaktra-test.log per CLAUDE.md instructions
   │   ├─ Agent logs "Skill workflow complete"
-  │   └─ Agent runs validator: python3 validators/validate_tpm.py /path/to/test
+  │   └─ Agent runs validator: python3 validators/validate_dev.py /path/to/test ST-TEST-001
   │
   ├─ 4. VALIDATE
   │   ├─ Validator checks .shaktra/ state (files exist, YAML valid, schemas correct)
-  │   └─ Agent prints [TEST:tpm] VERDICT: PASS or FAIL
+  │   └─ Agent prints [TEST:dev] VERDICT: PASS or FAIL
   │
   ├─ 5. COLLECT
   │   ├─ Test runner parses verdict from stdout
@@ -173,7 +323,7 @@ python3 run_workflow_tests.py --test tpm
 
 ### Direct Skill Invocation
 
-Tests invoke skills directly — the same way a real user would. The test agent calls `Skill("shaktra-tpm", args="...")` which triggers the full skill workflow including sub-agent spawning (architect, scrummaster, quality agents, memory curator). This means tests exercise the exact same code paths as production use.
+Tests invoke skills directly — the same way a real user would. The test agent calls `Skill("shaktra-dev", args="develop story ST-TEST-001")` which triggers the full skill workflow including sub-agent spawning (sw-engineer, test-agent, developer, sw-quality, memory-curator). This means tests exercise the exact same code paths as production use.
 
 ### Validators
 
@@ -187,6 +337,7 @@ python3 tests/workflows/validators/validate_review.py /path/to/project ST-001
 python3 tests/workflows/validators/validate_pm.py /path/to/project
 python3 tests/workflows/validators/validate_analyze.py /path/to/project
 python3 tests/workflows/validators/validate_bugfix.py /path/to/project
+python3 tests/workflows/validators/validate_negative.py /path/to/project no_handoff ST-001
 ```
 
 ## Debugging Failed Tests
@@ -246,7 +397,7 @@ tests/workflows/
   README.md                  ← This file
   run_workflow_tests.py      ← CLI entry point and test orchestrator
   test_runner.py             ← Core engine (subprocess, FileMonitor, timeout handling)
-  test_definitions.py        ← Test configs (prompts, setup functions, CLAUDE.md overrides)
+  test_definitions.py        ← Test configs (setup functions, prompts, CLAUDE.md overrides)
   validators/
     validate_common.py       ← Shared check utilities (YAML, field exists, schema)
     validate_init.py         ← /shaktra:init checks
@@ -256,9 +407,11 @@ tests/workflows/
     validate_pm.py           ← /shaktra:pm checks (PRD, personas, journeys)
     validate_analyze.py      ← /shaktra:analyze checks (analysis artifacts)
     validate_bugfix.py       ← /shaktra:bugfix checks (diagnosis, fix)
+    validate_negative.py     ← Negative test checks (error detection, no handoff, no progression)
   fixtures/
-    greenfield/              ← PRD + architecture doc for planning tests
+    greenfield/              ← PRD, architecture doc, design doc, code files, handoff fixtures
     brownfield/              ← Sample Python project for analysis tests
-    stories/                 ← Pre-built story YAML for dev tests (if running dev standalone)
+    stories/                 ← Pre-built story YAML for dev/review tests
+    negative/                ← Broken state fixtures (blocked stories, sparse stories, incomplete handoff)
   reports/                   ← Generated markdown reports (gitignored)
 ```

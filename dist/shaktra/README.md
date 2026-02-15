@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Version** | 0.1.2 |
+| **Version** | 0.1.3 |
 | **License** | MIT |
 | **Claude Code** | February 2025+ |
 | **Platform** | Claude code native (macOS, Linux, Windows) |
@@ -296,4 +296,4 @@ Quality and TDD discipline matter more than platform flexibility or custom workf
 
 ---
 
-**License:** MIT • **Version:** 0.1.2 • Built with ❤️ for AI developers
+**License:** MIT • **Version:** 0.1.3 • Built with ❤️ for AI developers
