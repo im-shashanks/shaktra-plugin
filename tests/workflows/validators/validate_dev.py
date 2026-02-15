@@ -111,8 +111,12 @@ def validate_dev(project_dir: str, story_id: str) -> ValidationReport:
                            "all tests green")
         check_field_exists(report, data, "code_summary.coverage",
                            "coverage recorded")
-        check_field_nonempty(report, data, "code_summary.files_modified",
-                             "files_modified non-empty")
+        # Accept either files_modified or files_created
+        cs = data.get("code_summary", {}) or {}
+        has_files = bool(cs.get("files_modified")) or bool(cs.get("files_created"))
+        report.add("code files listed", has_files,
+                    "no files_modified or files_created in code_summary"
+                    if not has_files else "")
 
     # --- Completion checks ---
     if current == "complete":
