@@ -27,7 +27,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from test_definitions import get_test_definitions
-from test_runner import LOG_FILE, TestResult, cleanup_orphan_teams, run_test
+from test_runner import (
+    LOG_FILE,
+    TestResult,
+    check_expected_reads,
+    cleanup_orphan_teams,
+    run_test,
+    _shorten_read_path,
+)
 
 REPORTS_DIR = Path(__file__).resolve().parent / "reports"
 
@@ -74,7 +81,8 @@ def main() -> int:
 
     # Report
     _print_summary(results)
-    report_path = _write_report(results)
+    expected_map = {t["name"]: t.get("expected_reads", []) for t in selected}
+    report_path = _write_report(results, expected_map)
     print(f"\nReport: {report_path}", file=sys.stderr)
 
     return 0 if all(r.passed for r in results) else 1
@@ -132,6 +140,24 @@ def _run_selected_tests(
             file=sys.stderr,
         )
 
+        # Check expected reads if defined
+        expected = test_def.get("expected_reads", [])
+        if expected:
+            missing = check_expected_reads(result, expected)
+            matched = len(expected) - len(missing)
+            print(
+                f"  Reads: {matched}/{len(expected)} expected patterns matched",
+                file=sys.stderr,
+            )
+            if missing:
+                for m in missing:
+                    print(f"    MISSING: {m}", file=sys.stderr)
+
+        # Show total unique reads
+        if result.reads:
+            unique = len(set(_shorten_read_path(r) for r in result.reads))
+            print(f"  Files read: {unique} unique", file=sys.stderr)
+
     return results
 
 
@@ -168,11 +194,16 @@ def _print_summary(results: list[TestResult]) -> None:
           file=sys.stderr)
 
 
-def _write_report(results: list[TestResult]) -> Path:
+def _write_report(
+    results: list[TestResult],
+    expected_map: dict[str, list[str]] | None = None,
+) -> Path:
     """Write markdown report to reports dir."""
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     path = REPORTS_DIR / f"workflow-test-{ts}.md"
+    if expected_map is None:
+        expected_map = {}
 
     lines = [
         "# Shaktra Workflow Test Report",
@@ -199,8 +230,43 @@ def _write_report(results: list[TestResult]) -> Path:
     ])
     for r in results:
         lines.extend([
-            f"### {r.name} ({r.verdict})",
+            f"### {r.name} — {r.verdict} ({r.duration_secs:.0f}s)",
             "",
+        ])
+
+        # Files Read section
+        if r.reads:
+            unique_reads = []
+            seen_set: set[str] = set()
+            for rd in r.reads:
+                short = _shorten_read_path(rd)
+                if short not in seen_set:
+                    seen_set.add(short)
+                    unique_reads.append(short)
+            lines.extend([
+                f"#### Reference Files Read ({len(unique_reads)} unique files)",
+                "",
+            ])
+            for ur in unique_reads:
+                lines.append(f"- `{ur}`")
+            lines.append("")
+
+            # Expected reads check
+            expected = expected_map.get(r.name, [])
+            if expected:
+                missing = check_expected_reads(r, expected)
+                matched = len(expected) - len(missing)
+                lines.append(
+                    f"#### Expected Reads: {matched}/{len(expected)} matched"
+                )
+                if missing:
+                    lines.append("")
+                    lines.append("**Missing:**")
+                    for m in missing:
+                        lines.append(f"- `{m}`")
+                lines.append("")
+
+        lines.extend([
             "<details><summary>Full output</summary>",
             "",
             "```",

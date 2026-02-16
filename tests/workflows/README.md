@@ -21,6 +21,7 @@ L5 tests verify what static checks cannot:
 - Quality gate execution (review → findings → fix loop)
 - State transitions (handoff phases, sprint allocation, memory capture)
 - File creation patterns (design docs, stories, sprints — correct format and content)
+- **Reference file consultation** — file-read tracking verifies agents actually read practices, standards, and quality definitions
 - **Error path handling** — negative tests verify pre-flight checks catch invalid state
 
 ### Test Scoping via CLAUDE.md Overrides
@@ -228,6 +229,35 @@ When a test starts, the runner prints a `tail -f` command:
 
 Together, these give you full visibility into what's happening — which agents are running, what quality review found, which files were created or modified, and how large they are.
 
+### File-Read Tracking
+
+The test runner uses `--output-format stream-json` to capture every Read tool invocation — including reads from sub-agents spawned via the Task tool. This tells you which reference files each workflow actually consulted:
+
+```
+  => PASS (138.5s)
+  Reads: 8/8 expected patterns matched
+  Files read: 17 unique
+```
+
+Tests can declare `expected_reads` patterns — substring matches against Read file paths. For example, the dev test expects agents to read coding practices, security practices, quality definitions, and severity taxonomy before writing code. The patterns are portable (not tied to absolute paths).
+
+After completion, the test log gets a `[READ-MANIFEST]` section:
+
+```
+[READ-MANIFEST] Files read during test:
+[READ-MANIFEST]   [plugin] skills/shaktra-tdd/coding-practices.md
+[READ-MANIFEST]   [plugin] skills/shaktra-tdd/security-practices.md
+[READ-MANIFEST]   [plugin] skills/shaktra-quality/comprehensive-review.md
+[READ-MANIFEST]   [plugin] skills/shaktra-reference/severity-taxonomy.md
+[READ-MANIFEST]   [project] .shaktra/settings.yml
+[READ-MANIFEST]   [project] .shaktra/stories/ST-TEST-001.yml
+[READ-MANIFEST] Total: 17 unique files
+```
+
+The markdown report includes a per-test "Reference Files Read" section with the full list and expected reads results.
+
+File-read tracking also serves as a regression check — when adding new reference materials or changing agent workflows, the read manifest confirms agents are actually consulting the files they're supposed to. If a refactor accidentally removes a file read, the `expected_reads` check will flag it.
+
 ## Available Tests
 
 ### Positive Tests (14)
@@ -297,9 +327,9 @@ python3 run_workflow_tests.py --test dev
   │
   ├─ 2. LAUNCH
   │   ├─ Start FileMonitor thread (watches for new/modified files every 10s)
-  │   └─ Start: claude --print --dangerously-skip-permissions \
-  │                   --plugin-dir dist/shaktra/ --max-turns 65 \
-  │                   -- "<test prompt>"
+  │   └─ Start: claude --print --dangerously-skip-permissions --verbose \
+  │                   --output-format stream-json --plugin-dir dist/shaktra/ \
+  │                   --max-turns 65 -- "<test prompt>"
   │
   ├─ 3. EXECUTE (inside the claude session)
   │   ├─ Agent logs "Starting test dev" to .shaktra-test.log
@@ -314,9 +344,10 @@ python3 run_workflow_tests.py --test dev
   │   └─ Agent prints [TEST:dev] VERDICT: PASS or FAIL
   │
   ├─ 5. COLLECT
-  │   ├─ Test runner parses verdict from stdout
-  │   ├─ Records duration and output
-  │   └─ Stops FileMonitor
+  │   ├─ Test runner parses stream-json: extracts text (for verdict) and Read tool paths
+  │   ├─ Records duration, output lines, and file-read manifest
+  │   ├─ Checks expected_reads patterns (if defined for this test)
+  │   └─ Stops FileMonitor, writes [READ-MANIFEST] to test log
   │
   └─ 6. REPORT
       ├─ Print summary table to stderr

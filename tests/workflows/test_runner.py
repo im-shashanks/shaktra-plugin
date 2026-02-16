@@ -10,6 +10,7 @@ and an agent-written log file (.shaktra-test.log).
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -28,6 +29,7 @@ class TestResult:
     verdict: str = "UNKNOWN"  # PASS, FAIL, TIMEOUT, ERROR
     duration_secs: float = 0.0
     output_lines: list[str] = field(default_factory=list)
+    reads: list[str] = field(default_factory=list)  # Read tool file paths
     error: str = ""
 
     @property
@@ -221,6 +223,8 @@ def run_test(
     cmd = [
         "claude", "--print",
         "--dangerously-skip-permissions",
+        "--verbose",
+        "--output-format", "stream-json",
         "--plugin-dir", str(PLUGIN_DIR),
         "--max-turns", str(max_turns),
     ]
@@ -269,6 +273,7 @@ def run_test(
         result.error = str(e)
     finally:
         monitor.stop()
+        write_read_manifest(Path(test_dir), result)
         if proc.poll() is None:
             proc.kill()
             proc.wait(timeout=5)
@@ -286,13 +291,42 @@ def _stream_output(
     result: TestResult,
     test_name: str,
 ) -> None:
-    """Read subprocess output line-by-line."""
+    """Parse stream-json output, extract text lines and Read file paths."""
     for line in proc.stdout:
-        line = line.rstrip("\n")
-        result.output_lines.append(line)
+        raw_line = line.rstrip("\n")
+        if not raw_line:
+            continue
+        try:
+            obj = json.loads(raw_line)
+        except json.JSONDecodeError:
+            # Not JSON — treat as plain text
+            result.output_lines.append(raw_line)
+            continue
 
-        if f"[TEST:{test_name}]" in line:
-            _print_progress(test_name, line.split(f"[TEST:{test_name}]")[-1].strip())
+        msg_type = obj.get("type")
+
+        if msg_type == "assistant":
+            for block in obj.get("message", {}).get("content", []):
+                block_type = block.get("type")
+                if block_type == "text":
+                    text = block.get("text", "")
+                    for line in text.splitlines():
+                        result.output_lines.append(line)
+                        if f"[TEST:{test_name}]" in line:
+                            _print_progress(
+                                test_name,
+                                line.split(f"[TEST:{test_name}]")[-1].strip(),
+                            )
+                elif block_type == "tool_use" and block.get("name") == "Read":
+                    file_path = block.get("input", {}).get("file_path", "")
+                    if file_path:
+                        result.reads.append(file_path)
+
+        elif msg_type == "result":
+            result_text = obj.get("result", "")
+            if result_text:
+                for line in str(result_text).splitlines():
+                    result.output_lines.append(line)
 
     proc.wait(timeout=10)
 
@@ -312,6 +346,51 @@ def _parse_verdict(lines: list[str], test_name: str) -> str:
 def _print_progress(test_name: str, message: str) -> None:
     """Print a progress line to stderr."""
     print(f"  [{test_name}] {message}", file=sys.stderr, flush=True)
+
+
+def check_expected_reads(result: TestResult, expected: list[str]) -> list[str]:
+    """Check that expected file patterns appear in Read tool calls.
+
+    Returns list of missing patterns (empty = all found).
+    """
+    missing = []
+    for pattern in expected:
+        if not any(pattern in path for path in result.reads):
+            missing.append(pattern)
+    return missing
+
+
+def _shorten_read_path(path: str) -> str:
+    """Shorten a Read file path for display — strip common prefixes."""
+    plugin_marker = "dist/shaktra/"
+    idx = path.find(plugin_marker)
+    if idx != -1:
+        return "[plugin] " + path[idx + len(plugin_marker):]
+    shaktra_marker = ".shaktra/"
+    idx = path.find(shaktra_marker)
+    if idx != -1:
+        return "[project] " + path[idx:]
+    return path
+
+
+def write_read_manifest(test_dir: Path, result: TestResult) -> None:
+    """Append a read manifest to the test log file."""
+    if not result.reads:
+        return
+    log_path = test_dir / LOG_FILE
+    seen: list[str] = []
+    for r in result.reads:
+        short = _shorten_read_path(r)
+        if short not in seen:
+            seen.append(short)
+    try:
+        with open(log_path, "a") as f:
+            f.write("\n[READ-MANIFEST] Files read during test:\n")
+            for s in seen:
+                f.write(f"[READ-MANIFEST]   {s}\n")
+            f.write(f"[READ-MANIFEST] Total: {len(seen)} unique files\n")
+    except OSError:
+        pass
 
 
 def cleanup_orphan_teams(prefix: str = "test-") -> None:

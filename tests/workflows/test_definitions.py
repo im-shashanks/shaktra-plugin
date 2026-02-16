@@ -414,6 +414,22 @@ def get_test_definitions(test_dir: str) -> list[dict]:
                 skill_args="develop story ST-TEST-001",
                 validator_cmd=_v("validate_dev.py", d, "ST-TEST-001"),
             ),
+            "expected_reads": [
+                # PLAN phase — sw-engineer loads practices
+                "shaktra-tdd/testing-practices.md",
+                "shaktra-tdd/coding-practices.md",
+                # GREEN phase — developer loads security practices
+                "shaktra-tdd/security-practices.md",
+                # QUALITY — sw-quality loads check definitions
+                "shaktra-quality/",
+                # Reference — severity taxonomy used by quality gates
+                "shaktra-reference/severity-taxonomy.md",
+                # Story and settings — loaded by multiple agents
+                "stories/ST-TEST-001.yml",
+                "settings.yml",
+                # Handoff — read/updated throughout
+                "handoff.yml",
+            ],
         },
         {
             "name": "review",
